@@ -1,0 +1,5 @@
+# Copy file này thành db.properties (cùng thư mục) và sửa user/password của máy bạn.
+# db.properties đã nằm trong .gitignore – KHÔNG commit.
+db.url=jdbc:mysql://localhost:3306/QuanLyCauLacBo?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Ho_Chi_Minh
+db.user=root
+db.password=changeme
