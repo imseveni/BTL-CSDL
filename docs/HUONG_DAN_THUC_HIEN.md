@@ -138,19 +138,19 @@ Trong lúc chờ Tú, hãy đọc ERD và viết trước các truy vấn, thủ
 
 ### B1. Tú: khung dự án, Module 01, tích hợp
 
-**Bảng:** `ThanhVien` (MSV, HoVaTen, GioiTinh, NgaySinh, NgayGiaNhap, TrangThaiHD, ChucVu, MaBan), `ThanhVien_SDT` (MSV, SDT), `ThanhVien_Email` (MSV, Email).
-SĐT và Email là thuộc tính đa trị nên mỗi thành viên có thể có nhiều dòng.
+**Bảng:** `ThanhVien` (MSV, HoVaTen, GioiTinh, NgaySinh, Email, SDT, NgayGiaNhap, TrangThaiHD, ChucVu, MaBan).
+Email và SĐT là thuộc tính đơn trị, mỗi thành viên có một giá trị, nằm ngay trong bảng `ThanhVien`.
 
 **Việc, theo thứ tự:**
 1. Cả nhóm xác nhận các dòng trong `docs/DECISIONS.md`.
 2. Viết `sql/01_seed_master/seed_master.sql`: vài ban chuyên môn, 15 đến 20 thành viên (kèm SĐT, email), vài quyền hạn.
-3. Làm Module 01 hoàn chỉnh (SQL + Java) làm mẫu: thêm, sửa, tìm theo MSV hoặc tên, xem chi tiết, đổi trạng thái hoạt động, thêm/xóa SĐT và email.
+3. Làm Module 01 hoàn chỉnh (SQL + Java) làm mẫu: thêm, sửa, tìm theo MSV hoặc tên, xem chi tiết, đổi trạng thái hoạt động.
 4. Review và merge Pull Request của 4 bạn. Mỗi lần merge, chạy `run_all.sql` từ DB trống.
 5. Làm truy vấn liên module (lịch sử hoạt động của một thành viên: khóa học, dự án, sự kiện, đánh giá).
 6. Giai đoạn cuối: phân quyền (user/role MySQL hoặc view giới hạn cho thành viên thường so với Ban Chủ nhiệm) và tổng hợp báo cáo.
 
 **Lưu ý:** nên đổi trạng thái hoạt động thay vì xóa cứng thành viên, vì nhiều bảng khác đang tham chiếu đến `MSV`.
-**Test gợi ý:** `NgayGiaNhap` trước `NgaySinh` bị chặn; `MaBan` không tồn tại bị chặn; thêm SĐT trùng cho cùng một MSV bị chặn.
+**Test gợi ý:** `NgayGiaNhap` trước `NgaySinh` bị chặn; `MaBan` không tồn tại bị chặn; thêm thành viên với MSV đã tồn tại bị chặn.
 
 ### B2. Đông: Module 02, 03, 08
 

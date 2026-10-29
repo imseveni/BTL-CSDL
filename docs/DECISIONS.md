@@ -14,7 +14,7 @@ Cả nhóm xác nhận các dòng "☐" rồi tick lại; thấy sai thì báo T
 | 6 | `PhuongThucThanhToan` | Đa trị (oval đôi trong ERD) → bảng `ThuChi_PhuongThucThanhToan` | ☐ |
 | 7 | `PhieuMuon.TrangThaiDuyet` | Có trong ERD → giữ (`ChoDuyet`/`DaDuyet`/`TuChoi`) | ☐ |
 | 8 | Kỹ thuật: thiếu `;`, CHECK cần MySQL ≥ 8.0.16 | Đã sửa; cả nhóm dùng MySQL 8.x | ☐ |
-| 9 | `Email`, `SDT`: ERD vẽ như thuộc tính đơn, nhưng mô hình quan hệ tách thành `TV-SĐT`, `TV-Email` | Theo mô hình quan hệ: bảng `ThanhVien_SDT`, `ThanhVien_Email`, bỏ 2 cột khỏi `ThanhVien` | ☐ |
+| 9 | `Email`, `SDT`: ERD vẽ là thuộc tính **đơn trị** (nhóm đã chuyển từ đa trị sang đơn trị); nhưng hình mô hình quan hệ (trang 3) còn vẽ 2 bảng `TV-SĐT`, `TV-Email` | Schema giữ 2 cột `Email`, `SDT` ngay trong `ThanhVien`, **không** có bảng riêng. **Tú vẽ lại** hình mô hình quan hệ: bỏ 2 bảng đó, thêm `Email`, `SĐT` vào bảng Thành viên | ☐ |
 | 10 | Mô hình quan hệ (trang 3) **chưa có** các bảng: Quyền hạn, TV–Quyền hạn, Đánh giá, Phiếu mượn, Chi tiết mượn, Cơ sở vật chất | Schema đã có đủ; **Đông** bổ sung 3 bảng đầu, **Trường** bổ sung 3 bảng sau vào hình (Giai đoạn 4) | ☐ |
 
 ## Ràng buộc phải làm bằng trigger/thủ tục (không viết được bằng CHECK)

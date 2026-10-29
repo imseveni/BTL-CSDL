@@ -9,7 +9,7 @@ Mỗi module gồm: SQL (`sql/modules/NN_ten/{seed,queries,tests}.sql`) và Java
 
 | Module | Chức năng | Bảng liên quan | Người phụ trách |
 |---|---|---|---|
-| 01 thanhvien | Quản lý Thành viên | ThanhVien, ThanhVien_SDT, ThanhVien_Email | **Tú** |
+| 01 thanhvien | Quản lý Thành viên | ThanhVien | **Tú** |
 | 02 banchuyenmon | Ban chuyên môn & Chức vụ | BanChuyenMon (+ChucVu trong ThanhVien) | **Đông** |
 | 03 quyenhan | Quyền hạn | QuyenHan, ThanhVien_QuyenHan | **Đông** |
 | 08 danhgia | Đánh giá thành viên | DanhGia | **Đông** |
@@ -34,7 +34,6 @@ Mỗi người còn viết **phần báo cáo của module mình** (mô tả b�
 **Module 01 – Quản lý Thành viên:**
 - [ ] Thêm mới thành viên
 - [ ] Cập nhật thông tin cá nhân
-- [ ] Thêm/xóa nhiều SĐT, nhiều email cho một thành viên
 - [ ] Xóa hoặc đổi trạng thái hoạt động
 - [ ] Tìm kiếm theo MSV hoặc họ tên
 - [ ] Xem chi tiết một thành viên
