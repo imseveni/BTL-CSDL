@@ -1,26 +1,12 @@
 package khoahoc;
 
-import common.AppModule;
-import common.ConsoleUtil;
+import common.Database;
 
-import java.util.Scanner;
+/** Adapter cho menu chung List<AppModule> của repo BTL-CSDL. */
+public class KhoaHocModule {
 
-/**
- * Module 04: Quản lý Khóa học.
- * Người phụ trách: Chiến.
- * Các file trong package này đặt tên theo hậu tố: X.java (thực thể), XDao.java (truy cập DB),
- * XService.java (nghiệp vụ), XUi.java (menu console).
- */
-public class KhoaHocModule implements AppModule {
+    public static KhoaHocSwingUi createSwingUi() {
 
-    @Override
-    public String getName() {
-        return "Quản lý Khóa học";
-    }
-
-    @Override
-    public void run(Scanner in) {
-        // TODO(Chiến): gọi menu (KhoaHocUi) khi đã cài đặt
-        ConsoleUtil.todo(getName());
+        return new KhoaHocSwingUi(new KhoaHocService(new KhoaHocDao(Database::getConnection)));
     }
 }
