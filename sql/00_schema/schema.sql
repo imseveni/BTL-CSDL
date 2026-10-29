@@ -21,6 +21,8 @@ CREATE TABLE ThanhVien (
     HoVaTen     VARCHAR(100) NOT NULL,
     NgaySinh    DATE,
     GioiTinh    VARCHAR(20),
+    Email       VARCHAR(100),
+    SDT         VARCHAR(20),
     NgayGiaNhap DATE NOT NULL,
     TrangThaiHD VARCHAR(50),
     MaBan       VARCHAR(20) NOT NULL,
@@ -30,26 +32,6 @@ CREATE TABLE ThanhVien (
         ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT CK_ThanhVien_NgayGiaNhap
         CHECK (NgaySinh IS NULL OR NgayGiaNhap >= NgaySinh)
-);
-
--- 02b. ThanhVien_SDT (thuộc tính đa trị)  [FIX #9] theo mô hình quan hệ
-CREATE TABLE ThanhVien_SDT (
-    MSV VARCHAR(20),
-    SDT VARCHAR(20),
-    PRIMARY KEY (MSV, SDT),
-    CONSTRAINT FK_TVSDT_ThanhVien
-        FOREIGN KEY (MSV) REFERENCES ThanhVien(MSV)
-        ON UPDATE CASCADE ON DELETE CASCADE
-);
-
--- 02c. ThanhVien_Email (thuộc tính đa trị)  [FIX #9] theo mô hình quan hệ
-CREATE TABLE ThanhVien_Email (
-    MSV   VARCHAR(20),
-    Email VARCHAR(100),
-    PRIMARY KEY (MSV, Email),
-    CONSTRAINT FK_TVEmail_ThanhVien
-        FOREIGN KEY (MSV) REFERENCES ThanhVien(MSV)
-        ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- 03. QuyenHan
