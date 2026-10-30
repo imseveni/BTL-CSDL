@@ -137,9 +137,9 @@ public class DuAnDao {
         }
     }
 
-    /** AVG bỏ qua NULL; không có giá trị tiến độ nào thì kết quả là NULL. */
+    /** AVG bỏ qua NULL; chưa có tiến độ thì trả 0, thống nhất với SQL module 05. */
     public BigDecimal averageProgress(String id) throws SQLException {
-        String sql = "SELECT AVG(TienDoRieng) AS TienDoChung FROM ThamGiaDuAn WHERE MaDuAn = ?";
+        String sql = "SELECT COALESCE(AVG(TienDoRieng), 0) AS TienDoChung FROM ThamGiaDuAn WHERE MaDuAn = ?";
         try (Connection connection = connections.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, id);
