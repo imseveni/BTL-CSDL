@@ -1,7 +1,6 @@
 package cosovatchat;
 
 import common.AppModule;
-import common.ConsoleUtil;
 
 import java.util.Scanner;
 
@@ -20,7 +19,6 @@ public class CoSoVatChatModule implements AppModule {
 
     @Override
     public void run(Scanner in) {
-        // TODO(Trường): gọi menu (CoSoVatChatUi) khi đã cài đặt
-        ConsoleUtil.todo(getName());
+        new CoSoVatChatUi().run(in);
     }
 }
