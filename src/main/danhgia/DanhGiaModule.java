@@ -1,7 +1,6 @@
 package danhgia;
 
 import common.AppModule;
-import common.ConsoleUtil;
 
 import java.util.Scanner;
 
@@ -20,7 +19,6 @@ public class DanhGiaModule implements AppModule {
 
     @Override
     public void run(Scanner in) {
-        // TODO(Đông): gọi menu (DanhGiaUi) khi đã cài đặt
-        ConsoleUtil.todo(getName());
+        new DanhGiaUi().run(in);
     }
 }
