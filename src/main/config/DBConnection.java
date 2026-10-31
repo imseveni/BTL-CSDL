@@ -1,42 +1,25 @@
 package config;
 
-import java.io.IOException;
-import java.io.InputStream;
+import common.Database;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 /**
- * Lấy kết nối MySQL. Đọc cấu hình từ db.properties (classpath).
- * File này do Tú quản lý – các thành viên KHÔNG sửa.
+ * Lấy kết nối MySQL cho các module. Chỉ Tú sửa file này.
+ *
+ * <p>Toàn bộ nhóm dùng chung MỘT cách đọc cấu hình, nằm trong {@link Database}: biến môi trường
+ * DB_URL, DB_USER, DB_PASSWORD, hoặc các file db.properties, database.properties trên classpath, hoặc
+ * cấu hình nhập trong cửa sổ Swing (chỉ giữ trong phiên). Nhờ vậy module dùng console và module dùng
+ * Swing luôn nối cùng một CSDL.
  */
 public final class DBConnection {
-
-    private static final Properties PROPS = new Properties();
-
-    static {
-        try (InputStream in = DBConnection.class.getClassLoader()
-                .getResourceAsStream("db.properties")) {
-            if (in == null) {
-                throw new IllegalStateException(
-                        "Không tìm thấy db.properties. Hãy copy db.properties.example "
-                        + "thành db.properties trong src/main/resources và sửa lại.");
-            }
-            PROPS.load(in);
-        } catch (IOException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
 
     private DBConnection() {
     }
 
     /** Mỗi lần gọi trả về 1 Connection mới; nhớ đóng bằng try-with-resources. */
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(
-                PROPS.getProperty("db.url"),
-                PROPS.getProperty("db.user"),
-                PROPS.getProperty("db.password"));
+        return Database.getConnection();
     }
 }
