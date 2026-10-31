@@ -194,27 +194,26 @@ CREATE TABLE PhieuMuon (
         ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
--- 15. CoSoVatChat  [FIX #3] ERD không có TinhTrang; [FIX #4] quan hệ 'Quản lý' (1 TV – N thiết bị) -> MSVQuanLy ở đây
+-- 15. CoSoVatChat  [FIX #3] ERD không có TinhTrang
 CREATE TABLE CoSoVatChat (
     MaThietBi      VARCHAR(20) PRIMARY KEY,
     TenThietBi     VARCHAR(150) NOT NULL,
     TongSoLuong    INT NOT NULL,
     SoLuongKhaDung INT NOT NULL,
-    MSVQuanLy      VARCHAR(20),
     CONSTRAINT CK_CSVT_TongSoLuong CHECK (TongSoLuong >= 0),
     CONSTRAINT CK_CSVT_SoLuongKhaDung
-        CHECK (SoLuongKhaDung >= 0 AND SoLuongKhaDung <= TongSoLuong),
-    CONSTRAINT FK_CSVT_NguoiQuanLy
-        FOREIGN KEY (MSVQuanLy) REFERENCES ThanhVien(MSV)
-        ON UPDATE CASCADE ON DELETE RESTRICT
+        CHECK (SoLuongKhaDung >= 0 AND SoLuongKhaDung <= TongSoLuong)
 );
 
--- 16. ChiTietMuon
+-- 16. ChiTietMuon (quan hệ 'Mượn' giữa PhieuMuon và CoSoVatChat)
+--     [FIX #4] 'Quản lý' nối ThanhVien (1) – N vào khung kết tập [PhieuMuon – Muon – CoSoVatChat]
+--     -> mỗi dòng mượn có 1 thành viên quản lý (MSVQuanLy)
 CREATE TABLE ChiTietMuon (
     MaPhieuMuon   VARCHAR(20),
     MaThietBi     VARCHAR(20),
     SoLuongMuon   INT NOT NULL,
     NgayTraThucTe DATE,
+    MSVQuanLy     VARCHAR(20) NOT NULL,
     PRIMARY KEY (MaPhieuMuon, MaThietBi),
     CONSTRAINT CK_ChiTietMuon_SoLuong CHECK (SoLuongMuon > 0),
     CONSTRAINT FK_ChiTietMuon_PhieuMuon
@@ -222,5 +221,8 @@ CREATE TABLE ChiTietMuon (
         ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT FK_ChiTietMuon_CSVT
         FOREIGN KEY (MaThietBi) REFERENCES CoSoVatChat(MaThietBi)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT FK_ChiTietMuon_NguoiQuanLy
+        FOREIGN KEY (MSVQuanLy) REFERENCES ThanhVien(MSV)
         ON UPDATE CASCADE ON DELETE RESTRICT
 );
