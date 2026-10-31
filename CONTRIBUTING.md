@@ -6,7 +6,16 @@
 - Mỗi người làm trên nhánh riêng: `feature/<module>-<mô-tả>`, ví dụ `feature/khoahoc-tra-cuu`.
 - **Không push trực tiếp** lên `main` hoặc `develop`.
 - Trước khi push: `git pull --rebase origin develop`.
-- Commit nhỏ, rõ ràng. Mẫu: `[khoahoc] thêm truy vấn lịch sử khóa học của thành viên`.
+- Commit nhỏ, mỗi commit một việc, theo chuẩn Conventional Commits (xem mục dưới).
+
+## Quy ước commit (Conventional Commits)
+Dạng: `<loại>(<phạm vi>): <mô tả>`
+
+- **Loại:** `feat` (chức năng mới), `fix` (sửa lỗi), `docs`, `test`, `refactor`, `chore`, `build`.
+- **Phạm vi:** tên module viết thường, không dấu: `thanhvien`, `banchuyenmon`, `quyenhan`, `khoahoc`, `duan`, `sukien`, `thuchi`, `danhgia`, `cosovatchat`, `muontra`; việc chung dùng `db`, `core`, `erd`.
+- **Mô tả:** bắt đầu bằng động từ, tối đa 72 ký tự, không có dấu chấm cuối.
+- Ví dụ: `feat(khoahoc): thêm thủ tục đăng ký khóa học`, `fix(muontra): sửa lỗi không cộng lại số lượng khi trả`, `test(duan): thêm ca thử tiến độ vượt 100%`.
+- Khi merge Pull Request chọn *Squash and merge* và đặt tiêu đề theo đúng dạng trên.
 
 ## Chống conflict
 1. Mỗi người chỉ sửa file trong module của mình (`sql/modules/NN_*` và `src/main/<module>/`).

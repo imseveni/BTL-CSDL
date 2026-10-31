@@ -114,13 +114,13 @@ Mỗi người còn viết **phần báo cáo của module mình** (mô tả b�
 **Module 09 – Cơ sở vật chất:**
 - [ ] Thêm, cập nhật thiết bị
 - [ ] Theo dõi tổng số lượng và số lượng khả dụng
-- [ ] Gán thành viên quản lý thiết bị (cột `MSVQuanLy` của `CoSoVatChat`)
+- [ ] Xem thiết bị đang cho mượn và thành viên quản lý từng dòng mượn (đọc từ `ChiTietMuon`, phối hợp module 10)
 - [ ] Tra cứu danh sách thiết bị
 - [ ] Kiểm tra số lượng khả dụng trước khi cho mượn
 
 **Module 10 – Mượn – Trả:**
 - [ ] Tạo phiếu mượn (ngày mượn, ngày hẹn trả, mục đích)
-- [ ] Thêm một hoặc nhiều thiết bị vào phiếu + số lượng
+- [ ] Thêm một hoặc nhiều thiết bị vào phiếu + số lượng, chỉ định thành viên quản lý (`MSVQuanLy`) cho từng dòng
 - [ ] Kiểm tra số lượng khả dụng trước khi xác nhận (trigger/thủ tục)
 - [ ] Ghi nhận ngày trả thực tế
 - [ ] Tự cập nhật `SoLuongKhaDung` khi mượn/trả (trigger)

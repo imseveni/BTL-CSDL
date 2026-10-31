@@ -1,4 +1,5 @@
 ## Module / nội dung
+<!-- Tiêu đề PR theo dạng: <loại>(<module>): <mô tả>, ví dụ feat(khoahoc): thêm thủ tục đăng ký khóa học -->
 <!-- VD: 04_khoahoc – thêm truy vấn tra cứu khóa học -->
 
 ## Đã làm

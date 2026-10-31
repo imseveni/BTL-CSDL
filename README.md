@@ -66,6 +66,8 @@ quan-ly-clb/
    ```
 5. Chạy test: `mvn test`
 
+> Nếu chữ tiếng Việt trên console bị lỗi font (thường gặp trên Windows): chạy `chcp 65001` trước khi chạy ứng dụng, hoặc đặt `JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8`.
+
 ## Thêm chức năng vào module của bạn
 1. Viết SQL (seed, truy vấn, thủ tục, trigger) trong `sql/modules/NN_<module>/`.
 2. Viết Java trong thư mục `src/main/<module>/`: thực thể → `Dao` → `Service` → `Ui`.

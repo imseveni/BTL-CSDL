@@ -22,7 +22,7 @@ Việc nào chưa rõ thì tạo Issue hỏi Tú, đừng tự sửa file của 
 3. Dựng DB sạch: `cd sql && mysql -u root -p < reset_db.sql && mysql -u root -p < run_all.sql`
 4. Làm việc theo A3 và A4 bên dưới.
 5. Chạy lại bước 3 từ DB trống, không được có lỗi.
-6. `git add`, `git commit -m "[module] mô tả"`, `git pull --rebase origin develop`, `git push`
+6. `git add`, `git commit -m "feat(khoahoc): mô tả ngắn"` (đúng dạng `<loại>(<module>): <mô tả>`, xem `CONTRIBUTING.md`), `git pull --rebase origin develop`, `git push`
 7. Mở Pull Request vào `develop`, điền checklist trong template, chờ Tú review.
 
 ### A3. Thư mục của bạn: viết SQL
@@ -203,22 +203,22 @@ Email và SĐT là thuộc tính đơn trị, mỗi thành viên có một giá 
 ### B5. Trường: Module 09, 10
 
 **Module 09, Cơ sở vật chất**
-- Bảng: `CoSoVatChat` (MaThietBi, TenThietBi, TongSoLuong, SoLuongKhaDung, MSVQuanLy). Quan hệ "Quản lý": 1 thành viên quản lý nhiều thiết bị.
-- Việc: thêm, sửa thiết bị; xem danh sách thiết bị và số lượng khả dụng; gán hoặc đổi thành viên quản lý; kiểm tra số lượng khả dụng.
+- Bảng: `CoSoVatChat` (MaThietBi, TenThietBi, TongSoLuong, SoLuongKhaDung). Bảng này **không** có cột người quản lý; người quản lý gắn với từng dòng mượn trong `ChiTietMuon` (xem module 10).
+- Việc: thêm, sửa thiết bị; xem danh sách thiết bị và số lượng khả dụng; kiểm tra số lượng khả dụng; xem thiết bị đang cho mượn và do ai quản lý (phối hợp module 10).
 - Test gợi ý: `SoLuongKhaDung` lớn hơn `TongSoLuong` bị chặn.
 
 **Module 10, Mượn – Trả (phần khó nhất, nên bắt đầu sớm)**
-- Bảng: `PhieuMuon` (MaPhieuMuon, NgayMuon, NgayHenTra, MucDichMuon, TrangThaiDuyet, MSVNguoiMuon), `ChiTietMuon` (MaPhieuMuon, MaThietBi, SoLuongMuon, NgayTraThucTe).
-- Quan hệ: "Lập": 1 thành viên lập nhiều phiếu; "Mượn": phiếu và thiết bị nhiều-nhiều, mỗi dòng có số lượng mượn và ngày trả thực tế.
+- Bảng: `PhieuMuon` (MaPhieuMuon, NgayMuon, NgayHenTra, MucDichMuon, TrangThaiDuyet, MSVNguoiMuon), `ChiTietMuon` (MaPhieuMuon, MaThietBi, SoLuongMuon, NgayTraThucTe, MSVQuanLy).
+- Quan hệ: "Lập": 1 thành viên lập nhiều phiếu; "Mượn": phiếu và thiết bị nhiều-nhiều, mỗi dòng có số lượng mượn và ngày trả thực tế; "Quản lý": 1 thành viên quản lý nhiều dòng mượn (ERD nối vào khung kết tập Phiếu mượn – Mượn – Cơ sở vật chất), nên mỗi dòng `ChiTietMuon` **bắt buộc** có `MSVQuanLy`. Người này phải là thành viên có quyền quản lý (tra `ThanhVien_QuyenHan`, thường thuộc Ban Chủ nhiệm).
 - **Các quy tắc phải do trigger hoặc thủ tục đảm bảo:**
   - Số lượng mượn không được vượt số lượng khả dụng.
   - Khi mượn thì trừ `SoLuongKhaDung`; khi ghi `NgayTraThucTe` thì cộng lại.
   - `NgayTraThucTe` không được trước `NgayMuon` của phiếu.
 - **Cần chốt với Tú trước khi làm:** trừ số lượng khả dụng lúc tạo chi tiết mượn, hay lúc phiếu được duyệt. Đề xuất: thủ tục `sp_DuyetPhieuMuon` kiểm tra và trừ số lượng cho cả phiếu trong một transaction, còn `sp_TraThietBi` cộng lại.
-- Việc: tạo phiếu; thêm nhiều thiết bị vào phiếu; duyệt hoặc từ chối phiếu; ghi nhận trả; xem thiết bị chưa trả hoặc trả muộn (nên làm view); xem lịch sử mượn của một thành viên.
-- Test gợi ý: mượn vượt số lượng khả dụng bị chặn; trả xong thì số lượng khả dụng trở lại như cũ; phiếu có ngày hẹn trả nhỏ hơn ngày mượn bị chặn.
+- Việc: tạo phiếu; thêm nhiều thiết bị vào phiếu; duyệt hoặc từ chối phiếu; ghi nhận trả; xem thiết bị chưa trả hoặc trả muộn (nên làm view); xem lịch sử mượn của một thành viên; xem các dòng mượn do một thành viên quản lý.
+- Test gợi ý: mượn vượt số lượng khả dụng bị chặn; trả xong thì số lượng khả dụng trở lại như cũ; phiếu có ngày hẹn trả nhỏ hơn ngày mượn bị chặn; thêm dòng mượn với `MSVQuanLy` không tồn tại bị chặn.
 
-**Báo cáo:** bổ sung vào mô hình quan hệ các bảng Cơ sở vật chất, Phiếu mượn, Chi tiết mượn (xem `DECISIONS.md` mục 10).
+**Báo cáo:** bổ sung vào mô hình quan hệ các bảng Cơ sở vật chất, Phiếu mượn, Chi tiết mượn (có cột `MSVQuanLy`) (xem `DECISIONS.md` mục 10).
 
 ---
 
