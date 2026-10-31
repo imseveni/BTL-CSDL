@@ -1,3 +1,5 @@
+package app;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import javax.swing.JFrame;
@@ -19,39 +21,51 @@ public final class SwingApp {
         // là luồng Swing dùng để xử lý giao diện và sự kiện.
         SwingUtilities.invokeLater(() -> {
 
-            // Thiết lập giao diện.
-            configureLookAndFeel();
-
-            // Tạo JFrame.
-            JFrame frame = new JFrame(
-                    "Quản lý Câu lạc bộ — Khóa học & Dự án");
-
-            // Dòng này quy định rằng khi người dùng bấm nút X của cửa sổ chính,
-            // chương trình sẽ kết thúc.
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            // Đưa nội dung hai module vào cửa sổ
-            frame.setContentPane(
-                    new ClubWorkspace(
-                            KhoaHocModule.createSwingUi(),
-                            DuAnModule.createSwingUi()));
-
-            // Đặt kích thước, vị trí và hiển thị cửa sổ
-            // Giới hạn kích thước nhỏ nhất
-            frame.setMinimumSize(
-                    new Dimension(
-                            1080,
-                            720));
-
-            // Đặt kích thước khi cửa sổ được mở:
-            frame.setSize(1220, 800);
-
-            // Đưa cửa sổ ra giữa màn hình theo cách định vị của Swing.
-            frame.setLocationRelativeTo(null);
-
-            // Hiển thị cửa sổ.
+            // Mở cửa sổ độc lập: bấm nút X thì thoát cả chương trình.
+            JFrame frame = createFrame(JFrame.EXIT_ON_CLOSE, 0);
             frame.setVisible(true);
         });
+    }
+
+    /**
+     * Tạo cửa sổ Khóa học và Dự án (chưa hiển thị). Phải gọi trên luồng giao diện (EDT).
+     *
+     * @param closeOperation JFrame.EXIT_ON_CLOSE khi chạy riêng, JFrame.DISPOSE_ON_CLOSE khi mở từ menu chính
+     * @param tab            tab mở sẵn: 0 = Khóa học, 1 = Dự án
+     */
+    public static JFrame createFrame(int closeOperation, int tab) {
+
+        // Thiết lập giao diện.
+        configureLookAndFeel();
+
+        // Tạo JFrame.
+        JFrame frame = new JFrame(
+                "Quản lý Câu lạc bộ — Khóa học & Dự án");
+
+        // Hành vi khi người dùng bấm nút X của cửa sổ chính.
+        frame.setDefaultCloseOperation(closeOperation);
+
+        // Đưa nội dung hai module vào cửa sổ
+        ClubWorkspace workspace = new ClubWorkspace(
+                KhoaHocModule.createSwingUi(),
+                DuAnModule.createSwingUi());
+        workspace.showTab(tab);
+        frame.setContentPane(workspace);
+
+        // Đặt kích thước, vị trí và hiển thị cửa sổ
+        // Giới hạn kích thước nhỏ nhất
+        frame.setMinimumSize(
+                new Dimension(
+                        1080,
+                        720));
+
+        // Đặt kích thước khi cửa sổ được mở:
+        frame.setSize(1220, 800);
+
+        // Đưa cửa sổ ra giữa màn hình theo cách định vị của Swing.
+        frame.setLocationRelativeTo(null);
+
+        return frame;
     }
 
     // Phương thức chọn kiểu giao diện

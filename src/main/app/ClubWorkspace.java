@@ -1,3 +1,5 @@
+package app;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -22,6 +24,9 @@ public class ClubWorkspace extends JPanel {
     // Hai biến này giữ tham chiếu đến giao diện của hai module.
     private final KhoaHocSwingUi khoaHoc;
     private final DuAnSwingUi duAn;
+
+    // Bộ tab Khóa học / Dự án; giữ lại để menu chính chọn mở sẵn tab nào.
+    private JTabbedPane tabs;
 
     // Đây là nhãn thông báo nằm phía dưới cửa sổ.
     private final JLabel connectionStatus = new JLabel(
@@ -118,7 +123,7 @@ public class ClubWorkspace extends JPanel {
 
         // Tạo hai tab
         // Là thành phần hiển thị nhiều trang dưới dạng tab.
-        JTabbedPane tabs = new JTabbedPane();
+        tabs = new JTabbedPane();
 
         // Tên component: được dùng để code kiểm thử tìm đúng bộ tab.
         // Đây không phải tên hiển thị trên giao diện.
@@ -158,6 +163,12 @@ public class ClubWorkspace extends JPanel {
 
         // Đưa footer xuống đáy panel chính.
         add(footer, BorderLayout.SOUTH);
+    }
+
+    /** Chọn tab đang hiển thị: 0 = Khóa học, 1 = Dự án. */
+    public void showTab(int index) {
+
+        tabs.setSelectedIndex(index);
     }
 
     // Kiểm tra có được phép đổi kết nối lúc này không
