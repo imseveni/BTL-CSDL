@@ -27,23 +27,23 @@ Mỗi người còn viết **phần báo cáo của module mình** (mô tả b�
 - [ ] Họp nhóm chốt các điểm trong `docs/DECISIONS.md`
 - [ ] Tạo repo, nhánh `main`/`develop`, bảo vệ nhánh (bắt buộc PR + review)
 - [ ] Chạy thử `sql/run_all.sql`, sửa lỗi schema
-- [ ] Viết `sql/01_seed_master/seed_master.sql` (ban, ~15–20 thành viên, quyền hạn)
-- [ ] Hoàn thành Module 01 làm **mẫu** cho cả nhóm (thực thể/Dao/Service/Ui + SQL + test)
-- [ ] Chốt định dạng chuẩn: đặt tên, xử lý lỗi, cách viết test
+- [x] Viết `sql/01_seed_master/seed_master.sql` (ban, ~15–20 thành viên, quyền hạn)
+- [x] Hoàn thành Module 01 làm **mẫu** cho cả nhóm (thực thể/Dao/Service/Ui + SQL + test)
+- [x] Chốt định dạng chuẩn: đặt tên, xử lý lỗi, cách viết test
 
 **Module 01 – Quản lý Thành viên:**
-- [ ] Thêm mới thành viên
-- [ ] Cập nhật thông tin cá nhân
-- [ ] Xóa hoặc đổi trạng thái hoạt động
-- [ ] Tìm kiếm theo MSV hoặc họ tên
-- [ ] Xem chi tiết một thành viên
-- [ ] Theo dõi ngày gia nhập và trạng thái hoạt động
+- [x] Thêm mới thành viên
+- [x] Cập nhật thông tin cá nhân
+- [x] Xóa hoặc đổi trạng thái hoạt động
+- [x] Tìm kiếm theo MSV hoặc họ tên
+- [x] Xem chi tiết một thành viên
+- [x] Theo dõi ngày gia nhập và trạng thái hoạt động
 
 **Giai đoạn 3–4:**
-- [ ] Review PR, merge vào `develop`, xử lý conflict
+- [x] Review PR, merge vào `develop`, xử lý conflict
 - [ ] Tích hợp: chạy `run_all.sql` từ DB trống
-- [ ] Truy vấn tổng hợp liên module (lịch sử hoạt động của một thành viên, thống kê)
-- [ ] Phân quyền: user/role MySQL hoặc view giới hạn cho Thành viên thường vs Ban Chủ nhiệm
+- [x] Truy vấn tổng hợp liên module (lịch sử hoạt động của một thành viên, thống kê)
+- [x] Phân quyền: user/role MySQL hoặc view giới hạn cho Thành viên thường vs Ban Chủ nhiệm
 - [ ] Tổng hợp báo cáo cuối, rà soát trước khi nộp
 
 ## Đông – Module 02, 03, 08 (cụm nhân sự)
@@ -114,13 +114,13 @@ Mỗi người còn viết **phần báo cáo của module mình** (mô tả b�
 **Module 09 – Cơ sở vật chất:**
 - [ ] Thêm, cập nhật thiết bị
 - [ ] Theo dõi tổng số lượng và số lượng khả dụng
-- [ ] Xem thiết bị đang cho mượn và thành viên quản lý từng dòng mượn (đọc từ `ChiTietMuon`, phối hợp module 10)
+- [ ] Gán thành viên quản lý thiết bị (cột `MSVQuanLy` của `CoSoVatChat`)
 - [ ] Tra cứu danh sách thiết bị
 - [ ] Kiểm tra số lượng khả dụng trước khi cho mượn
 
 **Module 10 – Mượn – Trả:**
 - [ ] Tạo phiếu mượn (ngày mượn, ngày hẹn trả, mục đích)
-- [ ] Thêm một hoặc nhiều thiết bị vào phiếu + số lượng, chỉ định thành viên quản lý (`MSVQuanLy`) cho từng dòng
+- [ ] Thêm một hoặc nhiều thiết bị vào phiếu + số lượng
 - [ ] Kiểm tra số lượng khả dụng trước khi xác nhận (trigger/thủ tục)
 - [ ] Ghi nhận ngày trả thực tế
 - [ ] Tự cập nhật `SoLuongKhaDung` khi mượn/trả (trigger)

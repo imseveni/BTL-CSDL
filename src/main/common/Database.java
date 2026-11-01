@@ -84,7 +84,9 @@ public final class Database {
 
         Properties config = new Properties();
 
-        // Nếu chưa có cấu hình phiên, chương trình đọc hai file theo thứ tự
+        // Nếu chưa có cấu hình phiên, chương trình đọc các file theo thứ tự (file sau ghi đè file trước).
+        // db.properties là file cấu hình chung của cả nhóm (xem db.properties.example).
+        load(config, "db.properties");
         load(config, "database.properties");
         load(config, "database-local.properties");
 
