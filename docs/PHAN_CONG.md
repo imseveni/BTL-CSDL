@@ -27,23 +27,23 @@ Mỗi người còn viết **phần báo cáo của module mình** (mô tả b�
 - [ ] Họp nhóm chốt các điểm trong `docs/DECISIONS.md`
 - [ ] Tạo repo, nhánh `main`/`develop`, bảo vệ nhánh (bắt buộc PR + review)
 - [ ] Chạy thử `sql/run_all.sql`, sửa lỗi schema
-- [ ] Viết `sql/01_seed_master/seed_master.sql` (ban, ~15–20 thành viên, quyền hạn)
-- [ ] Hoàn thành Module 01 làm **mẫu** cho cả nhóm (thực thể/Dao/Service/Ui + SQL + test)
-- [ ] Chốt định dạng chuẩn: đặt tên, xử lý lỗi, cách viết test
+- [x] Viết `sql/01_seed_master/seed_master.sql` (ban, ~15–20 thành viên, quyền hạn)
+- [x] Hoàn thành Module 01 làm **mẫu** cho cả nhóm (thực thể/Dao/Service/Ui + SQL + test)
+- [x] Chốt định dạng chuẩn: đặt tên, xử lý lỗi, cách viết test
 
 **Module 01 – Quản lý Thành viên:**
-- [ ] Thêm mới thành viên
-- [ ] Cập nhật thông tin cá nhân
-- [ ] Xóa hoặc đổi trạng thái hoạt động
-- [ ] Tìm kiếm theo MSV hoặc họ tên
-- [ ] Xem chi tiết một thành viên
-- [ ] Theo dõi ngày gia nhập và trạng thái hoạt động
+- [x] Thêm mới thành viên
+- [x] Cập nhật thông tin cá nhân
+- [x] Xóa hoặc đổi trạng thái hoạt động
+- [x] Tìm kiếm theo MSV hoặc họ tên
+- [x] Xem chi tiết một thành viên
+- [x] Theo dõi ngày gia nhập và trạng thái hoạt động
 
 **Giai đoạn 3–4:**
-- [ ] Review PR, merge vào `develop`, xử lý conflict
+- [x] Review PR, merge vào `develop`, xử lý conflict
 - [ ] Tích hợp: chạy `run_all.sql` từ DB trống
-- [ ] Truy vấn tổng hợp liên module (lịch sử hoạt động của một thành viên, thống kê)
-- [ ] Phân quyền: user/role MySQL hoặc view giới hạn cho Thành viên thường vs Ban Chủ nhiệm
+- [x] Truy vấn tổng hợp liên module (lịch sử hoạt động của một thành viên, thống kê)
+- [x] Phân quyền: user/role MySQL hoặc view giới hạn cho Thành viên thường vs Ban Chủ nhiệm
 - [ ] Tổng hợp báo cáo cuối, rà soát trước khi nộp
 
 ## Đông – Module 02, 03, 08 (cụm nhân sự)

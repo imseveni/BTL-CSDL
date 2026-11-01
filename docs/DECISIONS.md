@@ -14,8 +14,8 @@ Cả nhóm xác nhận các dòng "☐" rồi tick lại; thấy sai thì báo T
 | 6 | `PhuongThucThanhToan` | Đa trị (oval đôi trong ERD) → bảng `ThuChi_PhuongThucThanhToan` | ☐ |
 | 7 | `PhieuMuon.TrangThaiDuyet` | Có trong ERD → giữ (`ChoDuyet`/`DaDuyet`/`TuChoi`) | ☐ |
 | 8 | Kỹ thuật: thiếu `;`, CHECK cần MySQL ≥ 8.0.16 | Đã sửa; cả nhóm dùng MySQL 8.x | ☐ |
-| 9 | `Email`, `SDT`: ERD vẽ là thuộc tính **đơn trị** (nhóm đã chuyển từ đa trị sang đơn trị); nhưng hình mô hình quan hệ (trang 3) còn vẽ 2 bảng `TV-SĐT`, `TV-Email` | Schema giữ 2 cột `Email`, `SDT` ngay trong `ThanhVien`, **không** có bảng riêng. **Tú vẽ lại** hình mô hình quan hệ: bỏ 2 bảng đó, thêm `Email`, `SĐT` vào bảng Thành viên | ☐ |
-| 10 | Mô hình quan hệ (trang 3) **chưa có** các bảng: Quyền hạn, TV–Quyền hạn, Đánh giá, Phiếu mượn, Chi tiết mượn, Cơ sở vật chất | Schema đã có đủ; **Đông** bổ sung 3 bảng đầu, **Trường** bổ sung 3 bảng sau vào hình (Giai đoạn 4) | ☐ |
+| 9 | `Email`, `SDT`: ERD vẽ là thuộc tính **đơn trị** (nhóm đã chuyển từ đa trị sang đơn trị); nhưng hình mô hình quan hệ (trang 3) còn vẽ 2 bảng `TV-SĐT`, `TV-Email` | Schema giữ 2 cột `Email`, `SDT` ngay trong `ThanhVien`, **không** có bảng riêng. **Tú vẽ lại** hình mô hình quan hệ: bỏ 2 bảng đó, thêm `Email`, `SĐT` vào bảng Thành viên | ☑ Đã có hình đầy đủ `docs/erd/Mo_hinh_quan_he_day_du.png` (không còn hai bảng đó) |
+| 10 | Mô hình quan hệ (trang 3 trong draw.io) còn thiếu 6 bảng: Quyền hạn, TV–Quyền hạn, Đánh giá, Phiếu mượn, Chi tiết mượn, Cơ sở vật chất | Đã sinh hình đầy đủ 16 bảng trực tiếp từ `schema.sql` (`docs/erd/Mo_hinh_quan_he_day_du.png` và `.svg`); Đông đã vẽ riêng phần nhân sự. Nếu báo cáo cần đúng nét vẽ của nhóm thì chép lại hình này vào trang 3 của draw.io | ☑ |
 | 11 | `ThuChi.MSV` và `ThuChi.MaSK`: Phần II ghi "mỗi giao dịch gắn một sự kiện" và "do một thành viên thực hiện", nhưng Phần I cho phép khoản thu chi ngoài sự kiện, ERD vẽ nét đơn và SQL gốc để NULL | Giữ như SQL gốc: cả hai cột cho phép NULL. Nếu nhóm muốn bắt buộc thì đổi `MSV` (hoặc `MaSK`) thành `NOT NULL` | ☐ |
 
 ## Ràng buộc phải làm bằng trigger/thủ tục (không viết được bằng CHECK)

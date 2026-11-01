@@ -4,7 +4,7 @@ Hệ thống quản lý Câu lạc bộ sinh viên: thành viên, ban chuyên m�
 sự kiện, thu–chi, đánh giá, cơ sở vật chất và mượn–trả.
 
 **Công nghệ:** Java 17 · Maven · MySQL 8.0.16+ · JDBC · JUnit 5
-**Giao diện:** menu console (khung ban đầu; có thể nâng cấp sau mà không đổi tầng dao/service).
+**Giao diện:** menu console cho 10 module; Khóa học và Dự án có giao diện đồ họa Swing, mở từ menu chính (lựa chọn 4 và 5).
 
 ## Thành viên nhóm
 | Thành viên | Vai trò | Module |
@@ -29,22 +29,23 @@ quan-ly-clb/
 │   ├── HUONG_DAN_THUC_HIEN.md  hướng dẫn từng người làm phần của mình
 │   ├── PHAN_CONG.md          phân công + checklist từng người
 │   ├── DECISIONS.md          các điểm mâu thuẫn cần chốt
-│   ├── bao-cao/              báo cáo theo module
-│   └── erd/                  hình ERD và mô hình quan hệ (2 file .png)
+│   ├── bao-cao/              báo cáo từng module + TONG_HOP.md (trạng thái toàn dự án)
+│   └── erd/                  ERD, mô hình quan hệ đầy đủ (Mo_hinh_quan_he_day_du.png/.svg)
 ├── sql/
 │   ├── 00_schema/schema.sql      tạo bảng (chỉ Tú sửa)
 │   ├── 01_seed_master/           dữ liệu nền dùng chung
+│   ├── 02_security/phan_quyen.sql  vai trò và quyền MySQL (chạy riêng, cần quyền root)
 │   ├── modules/NN_<module>/      seed.sql, queries.sql, tests.sql của từng module
 │   ├── run_all.sql               chạy toàn bộ theo thứ tự
 │   └── reset_db.sql              xóa DB để dựng lại
 ├── src/main/
-│   ├── app/            Main, MainMenu (đăng ký module)
-│   ├── config/         DBConnection
-│   ├── common/         AppModule, ConsoleUtil, DataAccessException
+│   ├── app/            Main, MainMenu, SwingApp (đăng ký module)
+│   ├── config/         DBConnection (dùng chung cấu hình với common.Database)
+│   ├── common/         AppModule, Database, Validation, ConsoleUtil, DataAccessException
 │   ├── thanhvien/      ThanhVienModule + (Dao, Service, Ui... do chủ module thêm)
 │   ├── ... (10 thư mục module, mỗi thư mục một package phẳng)
 │   └── resources/      db.properties.example
-└── src/test/           test JUnit (app/MainMenuTest.java)
+└── src/test/           test JUnit của từng module
 ```
 
 ## Cách chạy
@@ -64,7 +65,11 @@ quan-ly-clb/
    ```bash
    mvn compile exec:java
    ```
-5. Chạy test: `mvn test`
+5. Chạy test: `mvn test` (không cần MySQL); thêm test tích hợp: `mvn test -Dclb.mysql.tests=true` (cần DB đã chạy `run_all.sql`).
+6. Giao diện đồ họa chạy riêng: `mvn compile exec:java -Dexec.mainClass=app.SwingApp`.
+7. Phân quyền MySQL (tùy chọn): `mysql -u root -p < sql/02_security/phan_quyen.sql`.
+
+Trạng thái toàn dự án và việc còn lại: [`docs/bao-cao/TONG_HOP.md`](docs/bao-cao/TONG_HOP.md).
 
 > Nếu chữ tiếng Việt trên console bị lỗi font (thường gặp trên Windows): chạy `chcp 65001` trước khi chạy ứng dụng, hoặc đặt `JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8`.
 
