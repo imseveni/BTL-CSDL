@@ -71,7 +71,7 @@ quan-ly-clb/
 
 Trạng thái toàn dự án và việc còn lại: [`docs/bao-cao/TONG_HOP.md`](docs/bao-cao/TONG_HOP.md).
 
-> Nếu chữ tiếng Việt trên console bị lỗi font (thường gặp trên Windows): chạy `chcp 65001` trước khi chạy ứng dụng, hoặc đặt `JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8`.
+> **Chữ tiếng Việt bị hiện thành `?`:** chương trình đã tự đổi console sang UTF-8 khi chạy trong Command Prompt, PowerShell, Windows Terminal. Nếu chạy trong IDE thì đặt encoding của cửa sổ chạy thành UTF-8: IntelliJ IDEA thêm `-Dfile.encoding=UTF-8` vào VM options của cấu hình Run; Eclipse chọn Run Configurations, tab Common, mục Encoding, chọn UTF-8; VS Code chạy `chcp 65001` trong terminal trước. Nên dùng phông chữ hỗ trợ tiếng Việt cho console (ví dụ Consolas hoặc Cascadia Mono).
 
 ## Thêm chức năng vào module của bạn
 1. Viết SQL (seed, truy vấn, thủ tục, trigger) trong `sql/modules/NN_<module>/`.
