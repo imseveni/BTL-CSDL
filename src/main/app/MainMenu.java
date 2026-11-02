@@ -10,6 +10,7 @@ import thuchi.ThuChiModule;
 import danhgia.DanhGiaModule;
 import cosovatchat.CoSoVatChatModule;
 import muontra.MuonTraModule;
+import baocaomuontra.BaoCaoMuonTraModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ public class MainMenu {
         modules.add(new DanhGiaModule());                                                // 08
         modules.add(new CoSoVatChatModule());                                            // 09
         modules.add(new MuonTraModule());                                                // 10
+        modules.add(new BaoCaoMuonTraModule());                                          // 11
     }
 
     public List<AppModule> getModules() {
