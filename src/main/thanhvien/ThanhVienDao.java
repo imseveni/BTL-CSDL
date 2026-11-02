@@ -67,6 +67,12 @@ public class ThanhVienDao {
                 rs.getString("MaBan"), rs.getString("TenBan"), rs.getString("ChucVu")), tuNgay, denNgay);
     }
 
+    /** Danh sách ban để chọn khi thêm thành viên hoặc lọc; chỉ đọc bảng BanChuyenMon. */
+    public List<BanLuaChon> danhSachBan() {
+        return query("SELECT MaBan, TenBan FROM BanChuyenMon ORDER BY MaBan",
+                rs -> new BanLuaChon(rs.getString("MaBan"), rs.getString("TenBan")));
+    }
+
     public List<ThongKeTrangThai> thongKeTrangThai() {
         return query("SELECT TrangThaiHD, SoThanhVien FROM vw_ThongKeTrangThaiThanhVien ORDER BY TrangThaiHD",
                 rs -> new ThongKeTrangThai(rs.getString("TrangThaiHD"), rs.getLong("SoThanhVien")));

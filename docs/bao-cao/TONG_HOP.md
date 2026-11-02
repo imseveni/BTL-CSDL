@@ -5,7 +5,7 @@ Tài liệu của Tú: trạng thái toàn dự án, cách dựng và kiểm tra
 ## 1. Kiến trúc
 
 - **CSDL:** MySQL 8.0.16 trở lên, 16 bảng (`sql/00_schema/schema.sql`), hình mô hình quan hệ đầy đủ ở `docs/erd/Mo_hinh_quan_he_day_du.png`.
-- **Ứng dụng:** Java 17, Maven, JDBC. Menu chính dạng console gồm 10 module; Khóa học và Dự án có giao diện đồ họa Swing, mở từ lựa chọn 4 và 5 (hoặc chạy riêng bằng `app.SwingApp`).
+- **Ứng dụng:** Java 17, Maven, JDBC. Mặc định mở cửa sổ Swing 10 tab (mỗi module một tab); module nào chưa có màn hình thì hiện màn hình tạm. Menu dòng lệnh cũ chạy bằng tham số `--console`. Tiến độ chuyển sang Swing: xem [PHAN_CONG_SWING.md](../PHAN_CONG_SWING.md).
 - **Cấu hình kết nối:** một nơi duy nhất, `common.Database`. Thứ tự đọc: biến môi trường `DB_URL`, `DB_USER`, `DB_PASSWORD`, rồi `db.properties`, `database.properties`, `database-local.properties`, hoặc cấu hình nhập trong cửa sổ Swing.
 - **Phân quyền MySQL:** `sql/02_security/phan_quyen.sql` (vai trò Thành viên, Ban Chủ nhiệm, Quản trị).
 
@@ -46,7 +46,7 @@ done
 cd ..
 mvn test                                       # test không cần MySQL
 mvn test -Dclb.mysql.tests=true                # thêm test tích hợp, cần DB đã chạy run_all.sql
-mvn compile exec:java                          # chạy ứng dụng
+mvn compile exec:java                          # chạy ứng dụng (cửa sổ Swing; thêm -Dexec.args="--console" để dùng menu dòng lệnh)
 ```
 
 Nếu `tests.sql` của module nào không in dòng PASS, dán lỗi vào Issue cho người phụ trách module đó.
@@ -58,3 +58,20 @@ Nếu `tests.sql` của module nào không in dòng PASS, dán lỗi vào Issue 
 - [ ] Nếu báo cáo cần hình vẽ tay: chép `Mo_hinh_quan_he_day_du.png` vào trang 3 của draw.io.
 - [ ] Bật bảo vệ nhánh `main`, `develop` trên GitHub (bắt buộc Pull Request).
 - [ ] Rà lại tên tác giả trong lịch sử Git và README trước khi nộp.
+
+## 6. Tiến độ giao diện Swing
+
+| Module | Màn hình Swing | Người làm |
+|---|---|---|
+| 01 Thành viên | Xong (mẫu của nhóm) | Tú |
+| 02 Ban chuyên môn | Chưa | Đông |
+| 03 Quyền hạn | Chưa | Đông |
+| 04 Khóa học | Xong | Chiến |
+| 05 Dự án | Xong | Chiến |
+| 06 Sự kiện | Chưa | Minh |
+| 07 Thu – Chi | Chưa | Minh |
+| 08 Đánh giá | Chưa | Đông |
+| 09 Cơ sở vật chất | Chưa | Trường |
+| 10 Mượn – Trả | Chưa | Trường |
+
+Cập nhật bảng này khi PR của từng module được merge.

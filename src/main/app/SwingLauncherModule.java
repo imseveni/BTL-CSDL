@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 /**
- * Mục menu mở giao diện đồ họa (Swing) của Khóa học hoặc Dự án từ menu chính dạng console.
+ * Mục menu console mở cửa sổ giao diện đồ họa (Swing) ở một tab chỉ định.
  * Cửa sổ chạy trên luồng giao diện; menu console chờ đến khi cửa sổ được đóng rồi mới quay lại.
  */
 public class SwingLauncherModule implements AppModule {
@@ -19,7 +19,7 @@ public class SwingLauncherModule implements AppModule {
     private final String name;
     private final int tab;
 
-    /** @param tab tab mở sẵn: 0 = Khóa học, 1 = Dự án */
+    /** @param tab tab mở sẵn, đếm từ 0 theo thứ tự module (3 = Khóa học, 4 = Dự án) */
     public SwingLauncherModule(String name, int tab) {
         this.name = name;
         this.tab = tab;

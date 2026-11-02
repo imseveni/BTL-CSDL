@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
 import common.SwingSupport;
 
 /** Giao diện Swing nằm cùng package phẳng với các lớp của module. */
-public class KhoaHocSwingUi extends JPanel {
+public class KhoaHocSwingUi extends JPanel implements common.Refreshable {
     private final KhoaHocService service;
     private final JTextField keyword = new JTextField(24);
     private final DefaultTableModel courses = SwingSupport.model("Mã khóa học", "Tên khóa học", "Khai giảng",
@@ -81,6 +81,7 @@ public class KhoaHocSwingUi extends JPanel {
         });
     }
 
+    @Override
     public boolean isBusy() {
         return tasks.isBusy();
     }
@@ -89,6 +90,7 @@ public class KhoaHocSwingUi extends JPanel {
         reload(selectedId());
     }
 
+    @Override
     public void resetAndReload() {
         keyword.setText("");
         rendering = true;

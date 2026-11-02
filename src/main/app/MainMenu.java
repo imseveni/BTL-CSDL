@@ -10,6 +10,7 @@ import thuchi.ThuChiModule;
 import danhgia.DanhGiaModule;
 import cosovatchat.CoSoVatChatModule;
 import muontra.MuonTraModule;
+import baocaomuontra.BaoCaoMuonTraModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +29,14 @@ public class MainMenu {
         modules.add(new ThanhVienModule());                                              // 01
         modules.add(new BanChuyenMonModule());                                           // 02
         modules.add(new QuyenHanModule());                                               // 03
-        modules.add(new SwingLauncherModule("Quản lý Khóa học (giao diện đồ họa)", 0));  // 04
-        modules.add(new SwingLauncherModule("Quản lý Dự án (giao diện đồ họa)", 1));     // 05
+        modules.add(new SwingLauncherModule("Quản lý Khóa học (giao diện đồ họa)", 3));  // 04
+        modules.add(new SwingLauncherModule("Quản lý Dự án (giao diện đồ họa)", 4));     // 05
         modules.add(new SuKienModule());                                                 // 06
         modules.add(new ThuChiModule());                                                 // 07
         modules.add(new DanhGiaModule());                                                // 08
         modules.add(new CoSoVatChatModule());                                            // 09
         modules.add(new MuonTraModule());                                                // 10
+        modules.add(new BaoCaoMuonTraModule());                                          // 11
     }
 
     public List<AppModule> getModules() {

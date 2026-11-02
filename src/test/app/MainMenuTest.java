@@ -8,6 +8,6 @@ class MainMenuTest {
 
     @Test
     void menuHas10Modules() {
-        assertEquals(10, new MainMenu().getModules().size());
+        assertEquals(11, new MainMenu().getModules().size());
     }
 }
