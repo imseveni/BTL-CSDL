@@ -4,7 +4,7 @@ Hệ thống quản lý Câu lạc bộ sinh viên: thành viên, ban chuyên m�
 sự kiện, thu–chi, đánh giá, cơ sở vật chất và mượn–trả.
 
 **Công nghệ:** Java 17 · Maven · MySQL 8.0.16+ · JDBC · JUnit 5
-**Giao diện:** menu console cho 10 module; Khóa học và Dự án có giao diện đồ họa Swing, mở từ menu chính (lựa chọn 4 và 5).
+**Giao diện:** cửa sổ Swing một cửa sổ, 10 tab (mỗi module một tab); module nào chưa có màn hình thì hiện màn hình tạm ghi tên người phụ trách. Menu dòng lệnh cũ vẫn dùng được bằng tham số `--console`. Hướng dẫn: [`docs/SWING_HUONG_DAN.md`](docs/SWING_HUONG_DAN.md), phân công: [`docs/PHAN_CONG_SWING.md`](docs/PHAN_CONG_SWING.md).
 
 ## Thành viên nhóm
 | Thành viên | Vai trò | Module |
@@ -39,7 +39,7 @@ quan-ly-clb/
 │   ├── run_all.sql               chạy toàn bộ theo thứ tự
 │   └── reset_db.sql              xóa DB để dựng lại
 ├── src/main/
-│   ├── app/            Main, MainMenu, SwingApp (đăng ký module)
+│   ├── app/            Main, SwingApp, ClubWorkspace (cửa sổ chính), SwingModules (đăng ký tab), MainMenu (console)
 │   ├── config/         DBConnection (dùng chung cấu hình với common.Database)
 │   ├── common/         AppModule, Database, Validation, ConsoleUtil, DataAccessException
 │   ├── thanhvien/      ThanhVienModule + (Dao, Service, Ui... do chủ module thêm)
@@ -63,11 +63,11 @@ quan-ly-clb/
    ```
 4. Chạy ứng dụng:
    ```bash
-   mvn compile exec:java
+   mvn compile exec:java                          # cửa sổ Swing
+   mvn compile exec:java -Dexec.args="--console"  # menu dòng lệnh
    ```
 5. Chạy test: `mvn test` (không cần MySQL); thêm test tích hợp: `mvn test -Dclb.mysql.tests=true` (cần DB đã chạy `run_all.sql`).
-6. Giao diện đồ họa chạy riêng: `mvn compile exec:java -Dexec.mainClass=app.SwingApp`.
-7. Phân quyền MySQL (tùy chọn): `mysql -u root -p < sql/02_security/phan_quyen.sql`.
+6. Phân quyền MySQL (tùy chọn): `mysql -u root -p < sql/02_security/phan_quyen.sql`.
 
 Trạng thái toàn dự án và việc còn lại: [`docs/bao-cao/TONG_HOP.md`](docs/bao-cao/TONG_HOP.md).
 
