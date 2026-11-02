@@ -95,6 +95,10 @@ public class ThanhVienService {
         return dao.giaNhap(tuNgay, denNgay);
     }
 
+    public List<BanLuaChon> danhSachBan() {
+        return dao.danhSachBan();
+    }
+
     public List<ThongKeTrangThai> thongKeTrangThai() {
         return dao.thongKeTrangThai();
     }
