@@ -16,20 +16,24 @@ public class Main {
 
     public static void main(String[] args) {
         boolean console = Arrays.asList(args).contains("--console");
+        boolean noDisplay = false;
         if (!console && GraphicsEnvironment.isHeadless()) {
             // Máy không có màn hình (ví dụ máy chủ, ssh): tự chuyển sang menu dòng lệnh.
-            System.out.println("Không có màn hình đồ họa, chuyển sang menu dòng lệnh.");
             console = true;
+            noDisplay = true;
         }
         if (console) {
-            runConsole();
+            runConsole(noDisplay);
         } else {
             SwingApp.main(args);
         }
     }
 
-    private static void runConsole() {
+    private static void runConsole(boolean noDisplay) {
         configureConsoleEncoding();
+        if (noDisplay) {
+            System.out.println("Không có màn hình đồ họa, chuyển sang menu dòng lệnh.");
+        }
         try (Scanner in = new Scanner(System.in, StandardCharsets.UTF_8)) {
             new MainMenu().run(in);
         }
