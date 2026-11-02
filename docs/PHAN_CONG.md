@@ -1,5 +1,7 @@
 # Phân công công việc
 
+> Giai đoạn giao diện Swing (sau khi các module SQL và console đã xong): xem [PHAN_CONG_SWING.md](PHAN_CONG_SWING.md).
+
 > Cách làm chi tiết cho từng người: xem [`HUONG_DAN_THUC_HIEN.md`](HUONG_DAN_THUC_HIEN.md).
 
 Quy ước: mỗi người **chỉ sửa trong module của mình**. Cần đổi schema → tạo Issue gửi Tú.

@@ -28,8 +28,8 @@ public class MainMenu {
         modules.add(new ThanhVienModule());                                              // 01
         modules.add(new BanChuyenMonModule());                                           // 02
         modules.add(new QuyenHanModule());                                               // 03
-        modules.add(new SwingLauncherModule("Quản lý Khóa học (giao diện đồ họa)", 0));  // 04
-        modules.add(new SwingLauncherModule("Quản lý Dự án (giao diện đồ họa)", 1));     // 05
+        modules.add(new SwingLauncherModule("Quản lý Khóa học (giao diện đồ họa)", 3));  // 04
+        modules.add(new SwingLauncherModule("Quản lý Dự án (giao diện đồ họa)", 4));     // 05
         modules.add(new SuKienModule());                                                 // 06
         modules.add(new ThuChiModule());                                                 // 07
         modules.add(new DanhGiaModule());                                                // 08

@@ -18,7 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import common.SwingSupport;
 
-public class DuAnSwingUi extends JPanel {
+public class DuAnSwingUi extends JPanel implements common.Refreshable {
     private final DuAnService service;
     private final JTextField keyword = new JTextField(24);
     private final DefaultTableModel projects = SwingSupport.model("Mã dự án", "Tên dự án", "Mục tiêu", "Bắt đầu",
@@ -93,6 +93,7 @@ public class DuAnSwingUi extends JPanel {
         });
     }
 
+    @Override
     public boolean isBusy() {
         return tasks.isBusy();
     }
@@ -101,6 +102,7 @@ public class DuAnSwingUi extends JPanel {
         reload(selectedId());
     }
 
+    @Override
     public void resetAndReload() {
         keyword.setText("");
         rendering = true;
