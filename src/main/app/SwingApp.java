@@ -6,8 +6,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
-import duan.DuAnModule;
-import khoahoc.KhoaHocModule;
 
 // Điểm khởi động giao diện Swing
 public final class SwingApp {
@@ -28,10 +26,10 @@ public final class SwingApp {
     }
 
     /**
-     * Tạo cửa sổ Khóa học và Dự án (chưa hiển thị). Phải gọi trên luồng giao diện (EDT).
+     * Tạo cửa sổ chính gồm 10 tab (chưa hiển thị). Phải gọi trên luồng giao diện (EDT).
      *
      * @param closeOperation JFrame.EXIT_ON_CLOSE khi chạy riêng, JFrame.DISPOSE_ON_CLOSE khi mở từ menu chính
-     * @param tab            tab mở sẵn: 0 = Khóa học, 1 = Dự án
+     * @param tab            tab mở sẵn, đếm từ 0 theo thứ tự module (0 = Thành viên ... 9 = Mượn – Trả)
      */
     public static JFrame createFrame(int closeOperation, int tab) {
 
@@ -40,15 +38,13 @@ public final class SwingApp {
 
         // Tạo JFrame.
         JFrame frame = new JFrame(
-                "Quản lý Câu lạc bộ — Khóa học & Dự án");
+                "Quản lý Câu lạc bộ");
 
         // Hành vi khi người dùng bấm nút X của cửa sổ chính.
         frame.setDefaultCloseOperation(closeOperation);
 
-        // Đưa nội dung hai module vào cửa sổ
-        ClubWorkspace workspace = new ClubWorkspace(
-                KhoaHocModule.createSwingUi(),
-                DuAnModule.createSwingUi());
+        // Đưa nội dung các module vào cửa sổ
+        ClubWorkspace workspace = new ClubWorkspace(SwingModules.all());
         workspace.showTab(tab);
         frame.setContentPane(workspace);
 

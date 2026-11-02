@@ -4,263 +4,171 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import common.Database;
+import common.Refreshable;
+import common.SwingModule;
 import common.SwingSupport;
 import common.Validation;
-import duan.DuAnSwingUi;
-import khoahoc.KhoaHocSwingUi;
 
-/** Nội dung cửa sổ tách khỏi JFrame để dễ kiểm thử bằng CSDL riêng. */
-// Lớp ghép các thành phần thành giao diện chính của ứng dụng.
+/**
+ * Nội dung cửa sổ chính: một tab cho mỗi {@link SwingModule}. Tab được tạo khi người dùng mở lần đầu
+ * (tạo xong sẽ tự nạp dữ liệu nếu panel cài đặt {@link Refreshable}), nên mở ứng dụng không phải chờ
+ * 10 màn hình cùng truy vấn MySQL. Tách khỏi JFrame để dễ kiểm thử.
+ */
 public class ClubWorkspace extends JPanel {
 
-    // Hai biến này giữ tham chiếu đến giao diện của hai module.
-    private final KhoaHocSwingUi khoaHoc;
-    private final DuAnSwingUi duAn;
+    private final List<SwingModule> modules;
+    private final JComponent[] panels;
+    private final JTabbedPane tabs = new JTabbedPane();
+    private final JLabel connectionStatus = new JLabel("Dùng cấu hình hiện tại hoặc chọn Kết nối MySQL.");
 
-    // Bộ tab Khóa học / Dự án; giữ lại để menu chính chọn mở sẵn tab nào.
-    private JTabbedPane tabs;
-
-    // Đây là nhãn thông báo nằm phía dưới cửa sổ.
-    private final JLabel connectionStatus = new JLabel(
-            "Dùng cấu hình hiện tại hoặc chọn Kết nối MySQL.");
-
-    public ClubWorkspace(KhoaHocSwingUi khoaHoc, DuAnSwingUi duAn) {
-
+    public ClubWorkspace(List<SwingModule> modules) {
         super(new BorderLayout());
+        this.modules = List.copyOf(modules);
+        this.panels = new JComponent[this.modules.size()];
 
-        this.khoaHoc = khoaHoc;
-        this.duAn = duAn;
+        add(createHeader(), BorderLayout.NORTH);
 
-        // Tạo phần đầu cửa sổ
-        JPanel header = new JPanel(
-                new BorderLayout(
-                        18,
-                        8));
+        tabs.setName("app.tabs");
+        tabs.setFont(tabs.getFont().deriveFont(Font.BOLD, 13f));
+        tabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        for (SwingModule module : this.modules) {
+            tabs.addTab("  " + module.getTitle() + "  ", new JPanel());
+        }
+        tabs.addChangeListener(event -> ensureCreated(tabs.getSelectedIndex()));
+        add(tabs, BorderLayout.CENTER);
+        add(createFooter(), BorderLayout.SOUTH);
 
-        // Màu nền header
+        ensureCreated(tabs.getSelectedIndex());
+    }
+
+    private JPanel createHeader() {
+        JPanel header = new JPanel(new BorderLayout(18, 8));
         header.setBackground(SwingSupport.ACCENT);
+        header.setBorder(BorderFactory.createEmptyBorder(14, 22, 14, 22));
 
-        // Phần khoảng trống bên trong header
-        header.setBorder(BorderFactory.createEmptyBorder(
-                18,
-                22,
-                18,
-                22));
-
-        // Tạo tiêu đề và dòng mô tả
-        JPanel titles = new JPanel(
-                new BorderLayout(
-                        0,
-                        5));
-
-        // Yêu cầu panel không tự tô kín nền của nó.
-        // Nhờ đó màu nền header có thể hiện xuyên qua,
-        // tránh xuất hiện một khối nền khác màu.
+        JPanel titles = new JPanel(new BorderLayout(0, 4));
         titles.setOpaque(false);
-
-        // Tiêu đề chính
         JLabel title = new JLabel("QUẢN LÝ CÂU LẠC BỘ");
-
-        // Tạo font cho tiêu đề chính
-        title.setFont(title.getFont().deriveFont(
-                Font.BOLD,
-                24f));
-
-        // Tạo màu chữ cho tiêu đề chính
+        title.setFont(title.getFont().deriveFont(Font.BOLD, 24f));
         title.setForeground(Color.WHITE);
-
-        // Tiêu đề được đặt ở trên
         titles.add(title, BorderLayout.NORTH);
-
-        // Dòng mô tả
-        JLabel subtitle = new JLabel(
-                "Khóa học & Dự án  ·  Theo dõi hoạt động và thành viên tham gia");
-
-        // Tạo màu cho dòng mô tả
-        subtitle.setForeground(
-                new Color(
-                        221,
-                        236,
-                        245));
-
-        // Dòng mô tả được đặt ở dưới
+        JLabel subtitle = new JLabel(modules.stream().map(SwingModule::getTitle).collect(Collectors.joining("  ·  ")));
+        subtitle.setForeground(new Color(221, 236, 245));
         titles.add(subtitle, BorderLayout.SOUTH);
-
-        // Đưa khối tiêu đề vào vùng giữa của header
         header.add(titles, BorderLayout.CENTER);
 
-        // Tạo nút “Kết nối MySQL”
-        JPanel connection = new JPanel(
-                new BorderLayout(
-                        0,
-                        5));
-
-        // Yêu cầu panel không tự tô kín nền của nó.
-        // Nhờ đó màu nền connnection có thể hiện xuyên qua,
-        // tránh xuất hiện một khối nền khác màu.
+        JPanel connection = new JPanel(new BorderLayout(0, 5));
         connection.setOpaque(false);
-
-        // Nút được tạo bằng hàm hỗ trợ
-        connection.add(SwingSupport.button(
-                "Kết nối MySQL",
-                "app.connection",
-                this::configure),
-                BorderLayout.NORTH);
-
-        // Đặt panel kết nối ở bên phải header
+        connection.add(SwingSupport.button("Kết nối MySQL", "app.connection", this::configure), BorderLayout.NORTH);
         header.add(connection, BorderLayout.EAST);
+        return header;
+    }
 
-        // Rồi đặt cả header lên trên panel chính
-        add(header, BorderLayout.NORTH);
-
-        // Tạo hai tab
-        // Là thành phần hiển thị nhiều trang dưới dạng tab.
-        tabs = new JTabbedPane();
-
-        // Tên component: được dùng để code kiểm thử tìm đúng bộ tab.
-        // Đây không phải tên hiển thị trên giao diện.
-        tabs.setName("app.tabs");
-
-        // Font tên tab được đặt in đậm, cỡ 14
-        tabs.setFont(tabs.getFont().deriveFont(Font.BOLD, 14f));
-
-        // Hai tab được thêm vào
-        tabs.addTab("  Khóa học  ", khoaHoc);
-        tabs.addTab("  Dự án  ", duAn);
-
-        // Đặt bộ tab vào vùng lớn nhất của panel chính.
-        add(tabs, BorderLayout.CENTER);
-
-        // Tạo thanh thông báo phía dưới
-        JPanel footer = new JPanel(
-                new BorderLayout(
-                        12,
-                        0));
-
-        // Tạo khoảng đệm
-        footer.setBorder(BorderFactory.createEmptyBorder(
-                8,
-                16,
-                9,
-                16));
-
-        // Nhãn trạng thái kết nối được đặt vào vùng giữa
+    private JPanel createFooter() {
+        JPanel footer = new JPanel(new BorderLayout(12, 0));
+        footer.setBorder(BorderFactory.createEmptyBorder(8, 16, 9, 16));
         connectionStatus.setName("app.connection.status");
         footer.add(connectionStatus, BorderLayout.CENTER);
-
-        // Bên phải là hướng dẫn
-        footer.add(new JLabel(
-                "Chọn một dòng để xem người tham gia"),
-                BorderLayout.EAST);
-
-        // Đưa footer xuống đáy panel chính.
-        add(footer, BorderLayout.SOUTH);
+        footer.add(new JLabel("Chọn một dòng trong bảng để xem chi tiết"), BorderLayout.EAST);
+        return footer;
     }
 
-    /** Chọn tab đang hiển thị: 0 = Khóa học, 1 = Dự án. */
+    /** Chọn tab đang hiển thị theo thứ tự module: 0 = Thành viên, 1 = Ban chuyên môn, ... 9 = Mượn – Trả. */
     public void showTab(int index) {
-
+        if (index < 0 || index >= panels.length) {
+            throw new IllegalArgumentException("Không có tab số " + index + ".");
+        }
         tabs.setSelectedIndex(index);
+        ensureCreated(index);
     }
 
-    // Kiểm tra có được phép đổi kết nối lúc này không
-    // Phương thức này được gọi khi nhấn nút kết nối.
-    private void configure() {
+    /** Panel của tab đã được tạo, hoặc null nếu người dùng chưa mở tab đó. Dùng cho kiểm thử. */
+    public JComponent panelAt(int index) {
+        return panels[index];
+    }
 
-        // Chỉ cần một trong hai module đang bận thì chương trình yêu cầu chờ,
-        // tránh thay cấu hình kết nối giữa lúc một thao tác đang thực hiện.
-        if (khoaHoc.isBusy() || duAn.isBusy()) {
-
-            throw new IllegalArgumentException(
-                    "Vui lòng đợi thao tác đang chạy kết thúc trước khi đổi kết nối.");
+    private void ensureCreated(int index) {
+        if (index < 0 || index >= panels.length || panels[index] != null) {
+            return;
         }
-
+        JComponent panel;
         try {
+            panel = modules.get(index).createPanel();
+        } catch (RuntimeException | LinkageError e) {
+            // Một module lỗi không được làm hỏng cả cửa sổ: hiện lỗi ngay trong tab của nó.
+            panel = errorPanel(modules.get(index).getTitle(), e);
+        }
+        panels[index] = panel;
+        tabs.setComponentAt(index, panel);
+        if (panel instanceof Refreshable refreshable) {
+            refreshable.resetAndReload();
+        }
+    }
 
-            // Đọc cấu hình và tạo các ô nhập
+    private static JComponent errorPanel(String title, Throwable error) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        JLabel label = new JLabel("<html><b>Không mở được module " + title + ".</b><br>" + error + "</html>");
+        label.setForeground(new Color(150, 40, 40));
+        panel.add(label, BorderLayout.NORTH);
+        return panel;
+    }
+
+    private void configure() {
+        for (JComponent panel : panels) {
+            if (panel instanceof Refreshable refreshable && refreshable.isBusy()) {
+                throw new IllegalArgumentException(
+                        "Vui lòng đợi thao tác đang chạy kết thúc trước khi đổi kết nối.");
+            }
+        }
+        try {
             Properties config = Database.settings();
-
-            // Ô URL
-            JTextField url = new JTextField(
-                    config.getProperty("db.url"),
-                    43);
-
-            // Ô tài khoản
-            JTextField user = new JTextField(
-                    config.getProperty("db.user"));
-
-            // Ô mật khẩu
-            // JPasswordField che các ký tự khi hiển thị.
-            JPasswordField password = new JPasswordField(
-                    config.getProperty("db.password"));
-
-            // Các ô được ghép thành form
-            // SwingSupport.form() bố trí nhãn ở cột trái và ô nhập ở cột phải.
-            JPanel form = SwingSupport.form(new String[] {
-                    "JDBC URL MySQL *", "Tài khoản *", "Mật khẩu" },
-                    url,
-                    user,
-                    password);
-
-            SwingSupport.editor(
-                    this,
-                    "Kiểm tra và kết nối MySQL",
+            JTextField url = new JTextField(config.getProperty("db.url"), 43);
+            JTextField user = new JTextField(config.getProperty("db.user"));
+            JPasswordField password = new JPasswordField(config.getProperty("db.password"));
+            JPanel form = SwingSupport.form(new String[] { "JDBC URL MySQL *", "Tài khoản *", "Mật khẩu" },
+                    url, user, password);
+            SwingSupport.editor(this, "Kiểm tra và kết nối MySQL",
                     "* Bắt buộc. Kiểm tra kết nối trước khi sử dụng; mật khẩu chỉ giữ trong phiên này.",
-                    "Kết nối",
-                    form,
-
+                    "Kết nối", form,
                     () -> {
-
-                        // Đọc và kiểm tra form
-                        String address = Validation.required(
-                                url.getText(),
-                                "Địa chỉ kết nối");
-
+                        String address = Validation.required(url.getText(), "Địa chỉ kết nối");
                         if (!address.startsWith("jdbc:mysql://")) {
-
                             throw new IllegalArgumentException(
                                     "URL cần có dạng jdbc:mysql://localhost:3306/QuanLyCauLacBo");
                         }
-
-                        return new Settings(
-                                address,
-                                Validation.required(user.getText(), "Tài khoản"),
+                        return new Settings(address, Validation.required(user.getText(), "Tài khoản"),
                                 new String(password.getPassword()));
-
-                    }, settings -> {
-
-                        // Kiểm tra và áp dụng kết nối
-                        Database.checkConnection(settings.url(), settings.user(),
-                                settings.password());
-                        Database.configureSession(settings.url(), settings.user(),
-                                settings.password());
-
-                    }, () -> {
-
-                        // Cập nhật giao diện sau khi thành công
-                        connectionStatus.setText(
-                                "Đã kiểm tra kết nối MySQL. Cấu hình chỉ dùng trong phiên này.");
-
-                        khoaHoc.resetAndReload();
-                        duAn.resetAndReload();
-
+                    },
+                    settings -> {
+                        Database.checkConnection(settings.url(), settings.user(), settings.password());
+                        Database.configureSession(settings.url(), settings.user(), settings.password());
+                    },
+                    () -> {
+                        connectionStatus.setText("Đã kiểm tra kết nối MySQL. Cấu hình chỉ dùng trong phiên này.");
+                        // Nạp lại mọi tab đã mở; tab chưa mở sẽ dùng cấu hình mới khi được mở lần đầu.
+                        for (JComponent panel : panels) {
+                            if (panel instanceof Refreshable refreshable) {
+                                refreshable.resetAndReload();
+                            }
+                        }
                     });
-
         } catch (SQLException e) {
-
             SwingSupport.error(this, e);
         }
     }
 
-    // Đối tượng gom dữ liệu kết nối
     private record Settings(String url, String user, String password) {
     }
 }
