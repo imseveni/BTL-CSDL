@@ -58,3 +58,7 @@ Các thao tác chỉ ghi một câu lệnh DML, không có chuỗi ghi nhiều b
 `tests.sql` tạo fixture `T_DONG_*` trong transaction và tự ROLLBACK cả khi thành công lẫn thất bại. Bao phủ thêm/sửa/xóa ban rỗng, sửa lại cùng giá trị, ban trống trong thống kê, chuyển ban, gán chức vụ, đếm thành viên; các ca sai gồm mã trùng, tên rỗng, mã quá dài, mã không tồn tại, xóa ban có thành viên và chức vụ rỗng. Lỗi mong đợi được đối chiếu đúng MYSQL_ERRNO, không coi mọi lỗi SQL là kết quả đạt.
 
 Đã chạy trên MySQL 8.0.40: `PASS module 02: dữ liệu thử đã rollback`. Java: 3 test service, kiểm thử menu và 1 ca tích hợp JDBC cho toàn bộ luồng module 02 đều đạt. Xem [biên bản kiểm thử và cách chạy](DONG_BAN_GIAO.md).
+
+## 5. Giao diện Swing
+
+Tab hiển thị danh sách ban và số thành viên, cùng bảng thành viên của ban đang chọn. Có thể thêm/sửa tên/xóa ban, chuyển thành viên sang ban khác và đổi chức vụ. Xóa có xác nhận và thông báo rõ ban còn thành viên; thao tác DB chạy nền, panel hỗ trợ tải lại khi đổi kết nối. Hai test Swing kiểm tra nạp dữ liệu, tải lại và chọn ban để đổi bảng chi tiết.

@@ -63,3 +63,7 @@ Kết quả MySQL 8.0.40: `PASS module 03: dữ liệu thử đã rollback`. 3 t
 ## 5. Bổ sung mô hình quan hệ
 
 Hai bảng `QuyenHan` và `ThanhVien_QuyenHan` được thể hiện trong [sơ đồ bổ sung nhân sự](../erd/Mo_hinh_quan_he_nhan_su.svg), kèm PK ghép, FK và lực lượng quan hệ. Có [bản PNG](../erd/Mo_hinh_quan_he_nhan_su.png) để đưa vào báo cáo tổng hợp.
+
+## 6. Giao diện Swing
+
+Tab quyền hiển thị danh sách quyền và bảng thành viên đang được cấp quyền đó. Người dùng có thể thêm/sửa/xóa quyền, nhập MSV để cấp/thu hồi, hoặc mở hộp tra cứu toàn bộ quyền của một thành viên. Xóa có xác nhận nêu rõ tác động cascade; DB chạy nền. Hai test Swing kiểm tra nạp/tải lại và đổi quyền đang chọn để nạp danh sách thành viên.

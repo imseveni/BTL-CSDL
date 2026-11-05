@@ -56,3 +56,7 @@ MySQL 8.0.40: `PASS module 08: dữ liệu thử đã rollback`. 3 test service,
 ## 5. Bổ sung mô hình quan hệ
 
 Bảng DanhGia cùng liên kết bắt buộc đến ThanhVien có trong [sơ đồ nhân sự SVG](../erd/Mo_hinh_quan_he_nhan_su.svg) và [PNG](../erd/Mo_hinh_quan_he_nhan_su.png). Sơ đồ này bổ sung ba bảng nhân sự thiếu ở mô hình trang 3 theo DECISIONS #10; phần cơ sở vật chất và mượn trả vẫn thuộc Trường.
+
+## 6. Giao diện Swing
+
+Tab tra lịch sử bằng MSV, hiển thị thông tin đánh giá và bảng tổng hợp theo loại; có thể thêm/cập nhật bản ghi bằng hộp thoại. Ngày nhập dùng `yyyy-MM-dd`, thao tác DB chạy nền và có thể tải lại khi đổi kết nối. Hai test Swing kiểm tra nạp thống kê, tìm lịch sử và tải lại lịch sử theo MSV.
