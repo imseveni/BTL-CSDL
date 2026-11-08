@@ -1,6 +1,8 @@
 package thanhvien;
 
 import common.SwingModule;
+import quyenhan.QuyenHanService;
+
 import javax.swing.JComponent;
 
 /** Module 01 trong cửa sổ Swing. Người phụ trách: Tú. */
@@ -13,6 +15,6 @@ public class ThanhVienSwingModule implements SwingModule {
 
     @Override
     public JComponent createPanel() {
-        return new ThanhVienSwingUi(new ThanhVienService());
+        return new ThanhVienWorkspace(new ThanhVienService(), new QuyenHanService());
     }
 }
