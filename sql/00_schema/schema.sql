@@ -5,6 +5,8 @@
 -- Các chỗ đánh dấu [FIX #n] là điểm lệch so với bản mô tả gốc, xem docs/DECISIONS.md.
 -- =====================================================================
 
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 CREATE DATABASE IF NOT EXISTS QuanLyCauLacBo
     CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE QuanLyCauLacBo;

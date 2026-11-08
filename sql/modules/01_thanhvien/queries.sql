@@ -1,6 +1,8 @@
 -- Module 01 (Quản lý Thành viên) – view, thủ tục, tra cứu liên module. Phụ trách: Tú.
 -- Chạy lại được (DROP ... IF EXISTS); không thay đổi schema dùng chung.
 -- Lưu ý: MESSAGE_TEXT của SIGNAL tối đa 128 ký tự nên các thông báo đều ngắn.
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 USE QuanLyCauLacBo;
 
 -- ---------------------------------------------------------------------

@@ -1,4 +1,6 @@
 -- Module 04 (Quản lý Khóa học) – ca thử (đúng + sai) để kiểm tra ràng buộc. Phụ trách: Chiến
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 USE QuanLyCauLacBo;
 
 -- Chạy trên DB thử nghiệm sau run_all.sql. Fixture tự tạo và ROLLBACK.

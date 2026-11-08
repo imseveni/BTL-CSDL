@@ -1,4 +1,6 @@
 -- Module 05 (Quản lý Dự án) – truy vấn / view / stored procedure / trigger. Phụ trách: Chiến
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 USE QuanLyCauLacBo;
 
 -- AVG bỏ qua NULL; chưa có tiến độ nào thì quy ước tiến độ chung bằng 0.

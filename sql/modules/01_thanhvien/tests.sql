@@ -3,6 +3,8 @@
 -- Toàn bộ dữ liệu thử mang mã T_TU_*, được tạo trong một transaction rồi ROLLBACK nên không để lại gì.
 -- Fixture dùng INSERT thường: nếu trùng mã thì dừng, không sửa dữ liệu sẵn có.
 -- Mỗi ca "sai" bắt đúng MYSQL_ERRNO mong đợi (1644 = SIGNAL 45000); lỗi khác sẽ làm test thất bại.
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 USE QuanLyCauLacBo;
 
 DROP PROCEDURE IF EXISTS sp_TestTu01;
