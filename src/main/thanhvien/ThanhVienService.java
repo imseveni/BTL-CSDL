@@ -95,6 +95,25 @@ public class ThanhVienService {
         return dao.giaNhap(tuNgay, denNgay);
     }
 
+    /** Dữ liệu báo cáo danh sách thành viên; ban và trạng thái để trống nghĩa là không lọc. */
+    public List<ThanhVien> baoCaoDanhSach(String maBan, String trangThai) {
+        String tt = Validation.optional(trangThai);
+        if (tt != null) {
+            oneOf(tt, TRANG_THAI, "Trạng thái");
+        }
+        return dao.baoCaoDanhSach(Validation.optional(maBan, "Mã ban", 20), tt);
+    }
+
+    /** Dữ liệu báo cáo tổng hợp hoạt động trong kỳ; cần cả hai ngày và đến ngày không trước từ ngày. */
+    public List<TongHopHoatDong> baoCaoHoatDong(LocalDate tuNgay, LocalDate denNgay) {
+        Validation.requiredDate(tuNgay, "Từ ngày");
+        Validation.requiredDate(denNgay, "Đến ngày");
+        if (denNgay.isBefore(tuNgay)) {
+            throw new IllegalArgumentException("Đến ngày không được trước từ ngày.");
+        }
+        return dao.baoCaoHoatDong(tuNgay, denNgay);
+    }
+
     public List<BanLuaChon> danhSachBan() {
         return dao.danhSachBan();
     }
