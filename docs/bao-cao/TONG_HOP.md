@@ -36,12 +36,12 @@ Các module đã chạy riêng lẻ trên MySQL, nhưng **chưa có bằng chứ
 ## 4. Cách dựng và kiểm tra (chạy trên MySQL của bạn)
 
 ```bash
-cd sql
-mysql -u root -p < reset_db.sql
-mysql -u root -p < run_all.sql                 # phải thoát với mã 0
-mysql -u root -p < 02_security/phan_quyen.sql  # tùy chọn, cần quyền CREATE ROLE
+cd sql        # chạy trong cmd; luôn giữ cờ --default-character-set=utf8mb4 để không hỏng chữ tiếng Việt
+mysql --default-character-set=utf8mb4 -u root -p < reset_db.sql
+mysql --default-character-set=utf8mb4 -u root -p < run_all.sql                 # phải thoát với mã 0
+mysql --default-character-set=utf8mb4 -u root -p < 02_security/phan_quyen.sql  # tùy chọn, cần quyền CREATE ROLE
 for m in 01_thanhvien 02_banchuyenmon 03_quyenhan 04_khoahoc 05_duan 06_sukien 07_thuchi 08_danhgia 09_cosovatchat 10_muontra; do
-  mysql -u root -p < modules/$m/tests.sql      # mong đợi dòng PASS ... của từng module
+  mysql --default-character-set=utf8mb4 -u root -p < modules/$m/tests.sql      # mong đợi dòng PASS ... của từng module
 done
 cd ..
 mvn test                                       # test không cần MySQL

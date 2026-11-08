@@ -5,11 +5,11 @@ Dành cho buổi demo với cô. Làm theo thứ tự; mỗi bước ghi rõ **v
 ## A. Chuẩn bị (làm trước buổi demo, khoảng 15 phút)
 
 1. Máy có **Java 17**, **Maven 3.8+**, **MySQL 8.0.16+**, và cửa sổ màn hình (không dùng máy chủ không có màn hình).
-2. Dựng CSDL từ đầu, trong thư mục `sql/`:
+2. Dựng CSDL từ đầu, trong thư mục `sql/`. Chạy trong **Command Prompt (cmd)**, **giữ nguyên cờ `--default-character-set=utf8mb4`** (thiếu cờ này trên Windows, chữ tiếng Việt trong bảng bị hỏng, ví dụ `Nguyß╗àn V─ân An`):
    ```bash
-   mysql -u root -p < reset_db.sql
-   mysql -u root -p < run_all.sql          # phải chạy xong không báo lỗi
-   mysql -u root -p < modules/01_thanhvien/tests.sql   # phải thấy dòng: PASS module 01
+   mysql --default-character-set=utf8mb4 -u root -p < reset_db.sql
+   mysql --default-character-set=utf8mb4 -u root -p < run_all.sql          # phải chạy xong không báo lỗi
+   mysql --default-character-set=utf8mb4 -u root -p < modules/01_thanhvien/tests.sql   # phải thấy dòng: PASS module 01
    ```
 3. Cấu hình kết nối: sao chép `src/main/resources/db.properties.example` thành `db.properties`, sửa tài khoản và mật khẩu MySQL.
 4. Thử chạy: `mvn compile exec:java`. Cửa sổ mở ra, tab **Thành viên** hiện 20 thành viên, chọn một dòng thì phần dưới có lịch sử hoạt động.
@@ -65,7 +65,8 @@ Dành cho buổi demo với cô. Làm theo thứ tự; mỗi bước ghi rõ **v
 | Không kết nối được MySQL | Bấm **Kết nối MySQL** ở góc trên bên phải, nhập lại địa chỉ, tài khoản, mật khẩu; nếu vẫn lỗi, dùng ảnh trong `anh/` và file Excel trong `mau-xuat/` để trình bày |
 | Máy không mở được cửa sổ | Dùng `mvn compile exec:java -Dexec.args="--console"` (menu chữ) và các ảnh |
 | Thông báo lỗi khác bảng ca kiểm tra | Đọc thông báo; mọi thông báo đều do mã dự án viết, nội dung tiếng Việt; chỉ ra ca đó bị chặn là đủ |
-| Nhập sai làm lệch dữ liệu demo | Chạy lại `reset_db.sql` rồi `run_all.sql` |
+| Nhập sai làm lệch dữ liệu demo | Chạy lại `reset_db.sql` rồi `run_all.sql` (có cờ `--default-character-set=utf8mb4`) |
+| Chữ tiếng Việt trong bảng bị hỏng (`ß╗à`, `─ân`...) | Dữ liệu đã nạp sai bảng mã: chạy lại `reset_db.sql` và `run_all.sql` với cờ `--default-character-set=utf8mb4` |
 
 ## D. Câu cô có thể hỏi
 | Câu hỏi | Gợi ý trả lời |

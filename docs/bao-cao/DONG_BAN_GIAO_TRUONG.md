@@ -61,7 +61,7 @@ HAVING SoLuongKhaDung <> KhaDungTinhLai;
 ## Cách chạy lại
 
 1. Dựng MySQL, copy `db.properties.example` thành `db.properties` theo README (không đưa mật khẩu vào Git). Dùng **DB thử riêng** vì ca tích hợp chèn rồi xóa dữ liệu.
-2. Từ thư mục `sql`: `mysql -u root -p < reset_db.sql` rồi `mysql -u root -p < run_all.sql`.
+2. Từ thư mục `sql`: `mysql --default-character-set=utf8mb4 -u root -p < reset_db.sql` rồi `mysql --default-character-set=utf8mb4 -u root -p < run_all.sql`.
 3. Chạy test SQL (trong mysql client, từ thư mục `sql`):
 
 ```sql

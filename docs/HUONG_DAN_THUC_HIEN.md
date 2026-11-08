@@ -19,7 +19,7 @@ Việc nào chưa rõ thì tạo Issue hỏi Tú, đừng tự sửa file của 
 ### A2. Quy trình mỗi lần làm việc
 1. `git checkout develop && git pull`
 2. `git checkout -b feature/<module>-<mô-tả>` (ví dụ `feature/khoahoc-tra-cuu`)
-3. Dựng DB sạch: `cd sql && mysql -u root -p < reset_db.sql && mysql -u root -p < run_all.sql`
+3. Dựng DB sạch: `cd sql && mysql --default-character-set=utf8mb4 -u root -p < reset_db.sql && mysql --default-character-set=utf8mb4 -u root -p < run_all.sql`
 4. Làm việc theo A3 và A4 bên dưới.
 5. Chạy lại bước 3 từ DB trống, không được có lỗi.
 6. `git add`, `git commit -m "feat(khoahoc): mô tả ngắn"` (đúng dạng `<loại>(<module>): <mô tả>`, xem `CONTRIBUTING.md`), `git pull --rebase origin develop`, `git push`
