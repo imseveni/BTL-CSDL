@@ -2,6 +2,8 @@ package thanhvien;
 
 import common.Refreshable;
 import common.SwingSupport;
+import quyenhan.QuyenHan;
+import quyenhan.QuyenHanService;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -14,14 +16,15 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * Màn hình Quản lý Thành viên: bảng thành viên ở trên (tìm kiếm, thêm, sửa, đổi trạng thái, xóa),
- * lịch sử hoạt động của thành viên đang chọn ở dưới. Đây là màn hình MẪU của nhóm: các module khác
- * nên theo cùng khuôn (xem docs/SWING_HUONG_DAN.md).
+ * Màn hình Quản lý Thành viên. Phía trên: bảng thành viên (tìm kiếm, thêm, sửa, đổi trạng thái, xóa).
+ * Phía dưới, cho thành viên đang chọn: tab Lịch sử hoạt động và tab Quyền hạn (cấp, thu hồi quyền).
+ * Đây là màn hình MẪU của nhóm (xem docs/SWING_HUONG_DAN.md).
  */
 public class ThanhVienSwingUi extends JPanel implements Refreshable {
 
@@ -29,24 +32,42 @@ public class ThanhVienSwingUi extends JPanel implements Refreshable {
     private static final String ALL_STATUS = "Tất cả trạng thái";
 
     private final ThanhVienService service;
+    private final QuyenHanService quyenService;
     private final JTextField keyword = new JTextField(20);
     private final JComboBox<Object> banFilter = new JComboBox<>(new Object[] { ALL_BANS });
     private final JComboBox<String> statusFilter = new JComboBox<>();
     private final DefaultTableModel members = SwingSupport.model("MSV", "Họ và tên", "Ngày sinh", "Giới tính",
             "Email", "Số điện thoại", "Ngày gia nhập", "Trạng thái", "Ban", "Chức vụ");
     private final DefaultTableModel history = SwingSupport.model("Loại hoạt động", "Mã", "Tên", "Chi tiết", "Ngày");
+    private final DefaultTableModel permissions = SwingSupport.model("Mã quyền", "Tên quyền", "Mô tả chi tiết");
     private final JTable memberTable = SwingSupport.table(members, "thanhvien.table");
     private final JTable historyTable = SwingSupport.table(history, "thanhvien.history");
-    private final JLabel historyTitle = new JLabel("Lịch sử hoạt động — chọn một thành viên");
+    private final JTable permissionTable = SwingSupport.table(permissions, "thanhvien.quyen.table");
+    private final JComboBox<QuyenItem> grantable = new JComboBox<>();
+    private final JLabel historyTitle = new JLabel("Chọn một thành viên để xem lịch sử hoạt động và quyền hạn");
     private final JLabel summary = new JLabel(" ");
     private final JLabel status = new JLabel("Đang chờ nạp danh sách thành viên.");
     private final SwingSupport.Tasks tasks = new SwingSupport.Tasks(this, status);
     private List<ThanhVien> rows = new ArrayList<>();
     private List<BanLuaChon> bans = new ArrayList<>();
+    private List<QuyenHan> granted = new ArrayList<>();
     private boolean rendering;
 
+    /** Một quyền hạn trong ô chọn, hiển thị "QH02 – Duyệt phiếu mượn". */
+    private record QuyenItem(QuyenHan quyen) {
+        @Override
+        public String toString() {
+            return quyen.maQuyenHan() + " – " + quyen.tenQuyenHan();
+        }
+    }
+
     public ThanhVienSwingUi(ThanhVienService service) {
+        this(service, new QuyenHanService());
+    }
+
+    public ThanhVienSwingUi(ThanhVienService service, QuyenHanService quyenService) {
         this.service = service;
+        this.quyenService = quyenService;
         setName("thanhvien.panel");
         setLayout(new BorderLayout(10, 10));
         setBackground(SwingSupport.BACKGROUND);
@@ -59,6 +80,11 @@ public class ThanhVienSwingUi extends JPanel implements Refreshable {
         statusFilter.setName("thanhvien.trangthai");
         statusFilter.addItem(ALL_STATUS);
         ThanhVienService.TRANG_THAI.forEach(statusFilter::addItem);
+        grantable.setName("thanhvien.quyen.combo");
+        // Cố định độ rộng các ô chọn để không bị co nhỏ khi danh sách trống.
+        banFilter.setPrototypeDisplayValue("BAN00 – Ban Truyền thông dài");
+        statusFilter.setPrototypeDisplayValue(ALL_STATUS + "  ");
+        grantable.setPrototypeDisplayValue(new QuyenItem(new QuyenHan("QH00", "Quản lý hoạt động của CLB", null)));
 
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, 7, 0));
         toolbar.add(new JLabel("MSV / họ tên:"));
@@ -81,18 +107,34 @@ public class ThanhVienSwingUi extends JPanel implements Refreshable {
         memberSection.add(memberActions, BorderLayout.NORTH);
         memberSection.add(SwingSupport.scroll(memberTable), BorderLayout.CENTER);
 
-        JPanel historySection = new JPanel(new BorderLayout(6, 6));
-        historyTitle.setFont(historyTitle.getFont().deriveFont(Font.BOLD));
+        // Phần dưới: hai tab cho thành viên đang chọn.
+        JPanel historyTab = new JPanel(new BorderLayout(6, 6));
         summary.setName("thanhvien.summary");
-        JPanel historyHead = new JPanel(new BorderLayout(6, 2));
-        historyHead.add(historyTitle, BorderLayout.NORTH);
-        historyHead.add(summary, BorderLayout.SOUTH);
-        historySection.add(historyHead, BorderLayout.NORTH);
-        historySection.add(SwingSupport.scroll(historyTable), BorderLayout.CENTER);
+        historyTab.add(summary, BorderLayout.NORTH);
+        historyTab.add(SwingSupport.scroll(historyTable), BorderLayout.CENTER);
 
-        JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, memberSection, historySection);
-        split.setResizeWeight(0.6);
-        split.setDividerLocation(300);
+        JPanel permissionTab = new JPanel(new BorderLayout(6, 6));
+        JPanel grantBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 7, 0));
+        grantBar.add(new JLabel("Cấp thêm quyền:"));
+        grantBar.add(grantable);
+        grantBar.add(SwingSupport.button("Cấp quyền", "thanhvien.quyen.grant", this::grant));
+        grantBar.add(SwingSupport.button("Thu hồi quyền đang chọn", "thanhvien.quyen.revoke", this::revoke));
+        permissionTab.add(grantBar, BorderLayout.NORTH);
+        permissionTab.add(SwingSupport.scroll(permissionTable), BorderLayout.CENTER);
+
+        JTabbedPane detailTabs = new JTabbedPane();
+        detailTabs.setName("thanhvien.detail.tabs");
+        detailTabs.addTab("Lịch sử hoạt động", historyTab);
+        detailTabs.addTab("Quyền hạn", permissionTab);
+
+        JPanel detailSection = new JPanel(new BorderLayout(6, 6));
+        historyTitle.setFont(historyTitle.getFont().deriveFont(Font.BOLD));
+        detailSection.add(historyTitle, BorderLayout.NORTH);
+        detailSection.add(detailTabs, BorderLayout.CENTER);
+
+        JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, memberSection, detailSection);
+        split.setResizeWeight(0.55);
+        split.setDividerLocation(280);
         split.setBorder(null);
         add(split, BorderLayout.CENTER);
         status.setName("thanhvien.status");
@@ -105,7 +147,7 @@ public class ThanhVienSwingUi extends JPanel implements Refreshable {
 
         memberTable.getSelectionModel().addListSelectionListener(event -> {
             if (!event.getValueIsAdjusting() && !rendering && !tasks.isBusy())
-                loadHistory();
+                loadDetail();
         });
     }
 
@@ -123,7 +165,7 @@ public class ThanhVienSwingUi extends JPanel implements Refreshable {
         try {
             rows = new ArrayList<>();
             members.setRowCount(0);
-            history.setRowCount(0);
+            clearDetail();
         } finally {
             rendering = false;
         }
@@ -134,8 +176,9 @@ public class ThanhVienSwingUi extends JPanel implements Refreshable {
     private record Loaded(List<ThanhVien> rows, List<BanLuaChon> bans) {
     }
 
-    /** Lịch sử hoạt động và số liệu tổng quan của một thành viên. */
-    private record Detail(String msv, List<HoatDong> history, TongQuanThanhVien overview) {
+    /** Dữ liệu của thành viên đang chọn: lịch sử, tổng quan, quyền đang có và toàn bộ quyền để chọn cấp. */
+    private record Detail(String msv, List<HoatDong> history, TongQuanThanhVien overview,
+                          List<QuyenHan> granted, List<QuyenHan> allPermissions) {
     }
 
     private void reload(String keepMsv) {
@@ -169,7 +212,7 @@ public class ThanhVienSwingUi extends JPanel implements Refreshable {
                     } finally {
                         rendering = false;
                     }
-                    loadHistory();
+                    loadDetail();
                 });
     }
 
@@ -188,20 +231,29 @@ public class ThanhVienSwingUi extends JPanel implements Refreshable {
         banFilter.setSelectedItem(restore == null ? ALL_BANS : restore);
     }
 
-    private void loadHistory() {
+    private void clearDetail() {
         history.setRowCount(0);
+        permissions.setRowCount(0);
+        grantable.removeAllItems();
+        granted = new ArrayList<>();
         summary.setText(" ");
+    }
+
+    private void loadDetail() {
+        clearDetail();
         String msv = selectedMsv();
         if (msv == null) {
-            historyTitle.setText("Lịch sử hoạt động — chọn một thành viên");
+            historyTitle.setText("Chọn một thành viên để xem lịch sử hoạt động và quyền hạn");
             status.setText("Tìm thấy " + rows.size() + " thành viên.");
             return;
         }
-        historyTitle.setText("Lịch sử hoạt động — " + msv + " · " + selected().hoVaTen());
-        tasks.run("Đang tải lịch sử hoạt động...",
-                () -> new Detail(msv, service.lichSu(msv), service.tongQuan(msv)), detail -> {
+        historyTitle.setText("Thành viên đang chọn — " + msv + " · " + selected().hoVaTen());
+        tasks.run("Đang tải chi tiết thành viên...",
+                () -> new Detail(msv, service.lichSu(msv), service.tongQuan(msv), quyenService.quyenCuaThanhVien(msv),
+                        quyenService.danhSach()),
+                detail -> {
                     if (!detail.msv().equals(selectedMsv())) {
-                        loadHistory();
+                        loadDetail();
                         return;
                     }
                     for (HoatDong h : detail.history())
@@ -210,9 +262,45 @@ public class ThanhVienSwingUi extends JPanel implements Refreshable {
                     TongQuanThanhVien t = detail.overview();
                     summary.setText("Khóa học: " + t.soKhoaHoc() + "   |   Dự án: " + t.soDuAn() + "   |   Sự kiện: "
                             + t.soSuKien() + "   |   Đánh giá: " + t.soDanhGia() + "   |   Phiếu mượn: " + t.soPhieuMuon());
-                    status.setText(rows.size() + " thành viên  |  " + detail.history().size()
-                            + " hoạt động của thành viên đang chọn.");
+                    granted = new ArrayList<>(detail.granted());
+                    for (QuyenHan q : granted)
+                        permissions.addRow(new Object[] { q.maQuyenHan(), q.tenQuyenHan(), SwingSupport.text(q.moTaChiTiet()) });
+                    for (QuyenHan q : detail.allPermissions()) {
+                        boolean already = granted.stream().anyMatch(g -> g.maQuyenHan().equals(q.maQuyenHan()));
+                        if (!already)
+                            grantable.addItem(new QuyenItem(q));
+                    }
+                    status.setText(rows.size() + " thành viên  |  " + detail.history().size() + " hoạt động, "
+                            + granted.size() + " quyền của thành viên đang chọn.");
                 });
+    }
+
+    /** Cấp quyền đang chọn trong ô cho thành viên đang chọn (ghi vào bảng ThanhVien_QuyenHan). */
+    private void grant() {
+        String msv = selected().msv();
+        QuyenItem item = (QuyenItem) grantable.getSelectedItem();
+        if (item == null)
+            throw new IllegalArgumentException("Không còn quyền nào để cấp cho thành viên này.");
+        tasks.run("Đang cấp quyền...", () -> {
+            quyenService.capQuyen(msv, item.quyen().maQuyenHan());
+            return true;
+        }, ok -> loadDetail());
+    }
+
+    /** Thu hồi quyền đang chọn trong bảng quyền của thành viên. */
+    private void revoke() {
+        String msv = selected().msv();
+        int view = permissionTable.getSelectedRow();
+        if (view < 0)
+            throw new IllegalArgumentException("Hãy chọn một quyền trong bảng Quyền hạn để thu hồi.");
+        QuyenHan quyen = granted.get(permissionTable.convertRowIndexToModel(view));
+        if (SwingSupport.confirm(this, "Thu hồi quyền " + quyen.maQuyenHan() + " – " + quyen.tenQuyenHan()
+                + " của " + msv + "?")) {
+            tasks.run("Đang thu hồi quyền...", () -> {
+                quyenService.thuHoiQuyen(msv, quyen.maQuyenHan());
+                return true;
+            }, ok -> loadDetail());
+        }
     }
 
     private String selectedMsv() {
