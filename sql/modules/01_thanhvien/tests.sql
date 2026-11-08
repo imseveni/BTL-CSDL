@@ -324,6 +324,62 @@ BEGIN
     IF NOT COALESCE((v_error = 1644), FALSE) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'FAIL: chặn khoảng ngày bị đảo ngược';
     END IF;
+    -- Hai thủ tục báo cáo: kiểm tra tham số sai (kết quả đúng được kiểm tra bằng mắt ở tab Báo cáo)
+    SET v_error = 0;
+    BEGIN
+        DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+        BEGIN
+            GET DIAGNOSTICS CONDITION 1 v_error = MYSQL_ERRNO;
+        END;
+        CALL sp_BaoCaoDanhSachThanhVien('T_TU_NONE', NULL);
+    END;
+    IF NOT COALESCE((v_error = 1644), FALSE) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'FAIL: báo cáo danh sách: chặn ban không tồn tại';
+    END IF;
+    SET v_error = 0;
+    BEGIN
+        DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+        BEGIN
+            GET DIAGNOSTICS CONDITION 1 v_error = MYSQL_ERRNO;
+        END;
+        CALL sp_BaoCaoDanhSachThanhVien(NULL, 'Bay mất');
+    END;
+    IF NOT COALESCE((v_error = 1644), FALSE) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'FAIL: báo cáo danh sách: chặn trạng thái lạ';
+    END IF;
+    SET v_error = 0;
+    BEGIN
+        DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+        BEGIN
+            GET DIAGNOSTICS CONDITION 1 v_error = MYSQL_ERRNO;
+        END;
+        CALL sp_BaoCaoHoatDongThanhVien(NULL, '2026-12-31');
+    END;
+    IF NOT COALESCE((v_error = 1644), FALSE) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'FAIL: báo cáo hoạt động: chặn thiếu từ ngày';
+    END IF;
+    SET v_error = 0;
+    BEGIN
+        DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+        BEGIN
+            GET DIAGNOSTICS CONDITION 1 v_error = MYSQL_ERRNO;
+        END;
+        CALL sp_BaoCaoHoatDongThanhVien('2026-01-01', NULL);
+    END;
+    IF NOT COALESCE((v_error = 1644), FALSE) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'FAIL: báo cáo hoạt động: chặn thiếu đến ngày';
+    END IF;
+    SET v_error = 0;
+    BEGIN
+        DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+        BEGIN
+            GET DIAGNOSTICS CONDITION 1 v_error = MYSQL_ERRNO;
+        END;
+        CALL sp_BaoCaoHoatDongThanhVien('2026-12-31', '2026-01-01');
+    END;
+    IF NOT COALESCE((v_error = 1644), FALSE) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'FAIL: báo cáo hoạt động: chặn khoảng ngày đảo ngược';
+    END IF;
     ROLLBACK;
     SELECT 'PASS module 01: dữ liệu thử đã rollback' AS KetQua;
 END$$
