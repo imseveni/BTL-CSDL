@@ -59,11 +59,15 @@ Nếu `tests.sql` của module nào không in dòng PASS, dán lỗi vào Issue 
 - [ ] Bật bảo vệ nhánh `main`, `develop` trên GitHub (bắt buộc Pull Request).
 - [ ] Rà lại tên tác giả trong lịch sử Git và README trước khi nộp.
 
-## 6. Tiến độ giao diện Swing
+## 6. Bản demo module Thành viên
+
+Module Thành viên đã đủ các tiêu chí 1, 3, 4, 5, 6, 7 và báo cáo mục 8 (ngắn): xem [`docs/bao-cao-btl/thanh-vien/`](../bao-cao-btl/thanh-vien/BAO_CAO_THANH_VIEN.md) và kịch bản demo [`KICH_BAN_DEMO.md`](../bao-cao-btl/thanh-vien/KICH_BAN_DEMO.md). Tab Thành viên trong ứng dụng gồm hai tab con: *Quản lý thành viên* (có tìm kiếm, thêm, sửa, quyền hạn, lịch sử hoạt động) và *Báo cáo* (xem trên màn hình, xuất Excel).
+
+## 7. Tiến độ giao diện Swing
 
 | Module | Màn hình Swing | Người làm |
 |---|---|---|
-| 01 Thành viên | Xong (mẫu của nhóm) | Tú |
+| 01 Thành viên | Xong (mẫu của nhóm; có tab Báo cáo và tab Quyền hạn) | Tú |
 | 02 Ban chuyên môn | Chưa | Đông |
 | 03 Quyền hạn | Chưa | Đông |
 | 04 Khóa học | Xong | Chiến |

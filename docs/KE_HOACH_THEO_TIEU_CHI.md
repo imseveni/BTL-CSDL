@@ -8,6 +8,22 @@ Căn cứ: tiêu chí chấm BTL do cô thông báo (8 mục, tổng 10 điểm)
 - Mục 1 đến 4 chiếm **6,5 / 10 điểm**; phần mềm (5, 6, 7) chỉ chiếm **2,5 / 10**. Vì vậy **kế hoạch "chuyển toàn bộ 10 module sang Swing" cần thu hẹp**: tiêu chí chỉ đòi 2 màn hình nhập, 1 màn hình tìm kiếm, 2 báo cáo. Hiện đã có 3 màn hình Swing (Thành viên, Khóa học, Dự án). Các màn hình Swing còn lại chỉ nên làm khi đã xong mục 1 đến 7.
 - Ước lượng độ hoàn thiện theo trọng số: khoảng **một nửa** (xem bảng).
 
+## 1b. Cập nhật: bản demo module Thành viên (làm mẫu cho cả nhóm)
+
+Module Thành viên đã được hoàn thiện đủ các tiêu chí 1, 3, 4, 5, 6, 7 và có báo cáo ngắn cho mục 8, để demo với cô và làm mẫu cho các module còn lại. Toàn bộ nằm trong `docs/bao-cao-btl/thanh-vien/`:
+
+| Tiêu chí | Đã có cho module Thành viên | Vị trí |
+|---|---|---|
+| 1. Yêu cầu dữ liệu | Mục 1: bài toán, người dùng, dữ liệu cần lưu, 10 quy tắc nghiệp vụ | `BAO_CAO_THANH_VIEN.md` |
+| 3. Mô hình quan hệ, mô tả bảng | Quy tắc ánh xạ, lược đồ 4 bảng, hình quan hệ, từ điển dữ liệu | cùng file, `anh/mo_hinh_quan_he_thanh_vien.png` |
+| 4. Chuẩn hóa 3NF | Phụ thuộc hàm, kiểm tra 1NF, 2NF, 3NF, ví dụ đưa về 3NF | cùng file |
+| 5. Hai màn hình nhập | Thêm thành viên (bảng ThanhVien) và Cấp, thu hồi quyền (bảng ThanhVien_QuyenHan); 16 và 8 ca kiểm tra | tab Thành viên; cùng file |
+| 6. Tìm kiếm | Tìm theo MSV, họ tên, ban, trạng thái; xem lịch sử hoạt động | tab Thành viên |
+| 7. Hai báo cáo xuất file | Danh sách thành viên theo ban; Tổng hợp hoạt động trong kỳ; xuất Excel; ghi rõ người lập, nơi nhận | tab Báo cáo; `mau-xuat/` |
+| 8. Báo cáo kèm SQL | Báo cáo ngắn (Markdown và Word) có phụ lục SQL | `BAO_CAO_THANH_VIEN.docx` |
+
+Kịch bản demo 8 đến 10 phút: `KICH_BAN_DEMO.md`. Các module khác làm theo đúng khuôn này (mỗi người một thư mục trong `docs/bao-cao-btl/`).
+
 ## 2. Hiện trạng từng tiêu chí
 
 | # | Tiêu chí | Điểm | Hoàn thiện | Đã có | Còn thiếu |

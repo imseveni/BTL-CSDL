@@ -70,6 +70,7 @@ quan-ly-clb/
 6. Phân quyền MySQL (tùy chọn): `mysql -u root -p < sql/02_security/phan_quyen.sql`.
 
 Trạng thái toàn dự án và việc còn lại: [`docs/bao-cao/TONG_HOP.md`](docs/bao-cao/TONG_HOP.md).
+Bản demo module Thành viên (báo cáo, kịch bản demo, ảnh, file Excel mẫu): [`docs/bao-cao-btl/thanh-vien/`](docs/bao-cao-btl/thanh-vien/BAO_CAO_THANH_VIEN.md).
 Đánh giá theo tiêu chí chấm và kế hoạch hoàn thiện: [`docs/KE_HOACH_THEO_TIEU_CHI.md`](docs/KE_HOACH_THEO_TIEU_CHI.md).
 
 > **Chữ tiếng Việt bị hiện thành `?`:** chương trình đã tự đổi console sang UTF-8 khi chạy trong Command Prompt, PowerShell, Windows Terminal. Nếu chạy trong IDE thì đặt encoding của cửa sổ chạy thành UTF-8: IntelliJ IDEA thêm `-Dfile.encoding=UTF-8` vào VM options của cấu hình Run; Eclipse chọn Run Configurations, tab Common, mục Encoding, chọn UTF-8; VS Code chạy `chcp 65001` trong terminal trước. Nên dùng phông chữ hỗ trợ tiếng Việt cho console (ví dụ Consolas hoặc Cascadia Mono).
