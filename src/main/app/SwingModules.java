@@ -11,6 +11,7 @@ import thuchi.ThuChiSwingModule;
 import danhgia.DanhGiaSwingModule;
 import cosovatchat.CoSoVatChatSwingModule;
 import muontra.MuonTraSwingModule;
+import baocaomuontra.BaoCaoMuonTraSwingModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ public final class SwingModules {
         list.add(new DanhGiaSwingModule());                                     // 08
         list.add(new CoSoVatChatSwingModule());                                     // 09
         list.add(new MuonTraSwingModule());                                     // 10
+        list.add(new BaoCaoMuonTraSwingModule());                               // 11
         return list;
     }
 }

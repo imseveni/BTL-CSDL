@@ -72,11 +72,12 @@ class ClubWorkspaceTest {
 
     @Test void danhSachModuleDayDuMuoiTabTheoThuTuPhanCong() {
         List<String> titles = SwingModules.all().stream().map(SwingModule::getTitle).toList();
-        assertEquals(10, titles.size());
-        assertEquals(10, titles.stream().distinct().count());
+        assertEquals(11, titles.size());
+        assertEquals(11, titles.stream().distinct().count());
         assertEquals("Thành viên", titles.get(0));
         assertEquals("Khóa học", titles.get(3));
         assertEquals("Dự án", titles.get(4));
         assertEquals("Mượn – Trả", titles.get(9));
+        assertEquals("Báo cáo Mượn – Trả", titles.get(10));
     }
 }

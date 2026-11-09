@@ -56,3 +56,4 @@ public class Main {
         System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err), true, StandardCharsets.UTF_8));
     }
 }
+//jdbc:mysql://localhost:3306/quanly_clb?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Ho_Chi_Minh
