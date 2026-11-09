@@ -1,5 +1,7 @@
 -- Module 06 (Quản lý Sự kiện) – dữ liệu mẫu. Phụ trách: Minh
 -- Dùng dải mã riêng (SK01..) để không trùng với module khác.
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 USE QuanLyCauLacBo;
 
 -- 1. Thêm dữ liệu mẫu cho bảng SuKien (dải mã SK01 - SK05)

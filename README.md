@@ -53,9 +53,12 @@ quan-ly-clb/
 2. Dựng CSDL (chạy trong thư mục `sql/`):
    ```bash
    cd sql
-   mysql -u root -p < run_all.sql
+   mysql --default-character-set=utf8mb4 -u root -p < run_all.sql
    ```
-   Dựng lại từ đầu: `mysql -u root -p < reset_db.sql` rồi chạy lại `run_all.sql`.
+   Dựng lại từ đầu: `mysql --default-character-set=utf8mb4 -u root -p < reset_db.sql` rồi chạy lại `run_all.sql`.
+   > **Windows:** chạy trong **Command Prompt (cmd)**; PowerShell không hỗ trợ dấu `<`. Cũng có thể mở `mysql --default-character-set=utf8mb4 -u root -p` rồi gõ `SOURCE run_all.sql;`.
+   > **Luôn giữ `--default-character-set=utf8mb4`.** Mọi file SQL đã có `SET NAMES utf8mb4;`, nhưng cờ này là lớp bảo vệ thứ hai.
+   > **Nếu chữ tiếng Việt trong bảng bị hỏng** (ví dụ `Nguyß╗àn V─ân An`): dữ liệu đã nạp sai bảng mã. Kiểm tra bằng `SELECT HEX(HoVaTen) FROM ThanhVien WHERE MSV='B21DCCN001';`: chữ đúng bắt đầu bằng `4E677579E1BB856E` (Nguyễn). Cách sửa: chạy lại `reset_db.sql` rồi `run_all.sql` bằng lệnh có cờ `--default-character-set=utf8mb4` như trên.
 3. Cấu hình kết nối:
    ```bash
    cp src/main/resources/db.properties.example src/main/resources/db.properties
@@ -67,9 +70,11 @@ quan-ly-clb/
    mvn compile exec:java -Dexec.args="--console"  # menu dòng lệnh
    ```
 5. Chạy test: `mvn test` (không cần MySQL); thêm test tích hợp: `mvn test -Dclb.mysql.tests=true` (cần DB đã chạy `run_all.sql`).
-6. Phân quyền MySQL (tùy chọn): `mysql -u root -p < sql/02_security/phan_quyen.sql`.
+6. Phân quyền MySQL (tùy chọn): `mysql --default-character-set=utf8mb4 -u root -p < sql/02_security/phan_quyen.sql`.
 
 Trạng thái toàn dự án và việc còn lại: [`docs/bao-cao/TONG_HOP.md`](docs/bao-cao/TONG_HOP.md).
+Bản demo module Thành viên (báo cáo, kịch bản demo, ảnh, file Excel mẫu): [`docs/bao-cao-btl/thanh-vien/`](docs/bao-cao-btl/thanh-vien/BAO_CAO_THANH_VIEN.md).
+Đánh giá theo tiêu chí chấm và kế hoạch hoàn thiện: [`docs/KE_HOACH_THEO_TIEU_CHI.md`](docs/KE_HOACH_THEO_TIEU_CHI.md).
 
 > **Chữ tiếng Việt bị hiện thành `?`:** chương trình đã tự đổi console sang UTF-8 khi chạy trong Command Prompt, PowerShell, Windows Terminal. Nếu chạy trong IDE thì đặt encoding của cửa sổ chạy thành UTF-8: IntelliJ IDEA thêm `-Dfile.encoding=UTF-8` vào VM options của cấu hình Run; Eclipse chọn Run Configurations, tab Common, mục Encoding, chọn UTF-8; VS Code chạy `chcp 65001` trong terminal trước. Nên dùng phông chữ hỗ trợ tiếng Việt cho console (ví dụ Consolas hoặc Cascadia Mono).
 

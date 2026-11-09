@@ -1,6 +1,8 @@
 -- Module 01 (Quản lý Thành viên) – view, thủ tục, tra cứu liên module. Phụ trách: Tú.
 -- Chạy lại được (DROP ... IF EXISTS); không thay đổi schema dùng chung.
 -- Lưu ý: MESSAGE_TEXT của SIGNAL tối đa 128 ký tự nên các thông báo đều ngắn.
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 USE QuanLyCauLacBo;
 
 -- ---------------------------------------------------------------------
@@ -288,5 +290,69 @@ BEGIN
     END IF;
     SELECT MSV, HoVaTen, TrangThaiHD, SoKhoaHoc, SoDuAn, SoSuKien, SoDanhGia, SoPhieuMuon
     FROM vw_TongQuanThanhVien WHERE MSV = v_MSV;
+END$$
+DELIMITER ;
+
+-- ---------------------------------------------------------------------
+-- 3. BÁO CÁO (xem trên màn hình và xuất Excel ở tab Báo cáo của ứng dụng)
+-- ---------------------------------------------------------------------
+
+-- Báo cáo 1: Danh sách thành viên theo ban.
+-- Người lập: Thư ký / Ban Chủ nhiệm. Gửi: đơn vị quản lý CLB (Đoàn trường, giảng viên phụ trách) và Chủ nhiệm.
+-- Sắp xếp theo ban, rồi chức vụ (Chủ nhiệm trước), rồi MSV. Ban và trạng thái là bộ lọc tùy chọn.
+DROP PROCEDURE IF EXISTS sp_BaoCaoDanhSachThanhVien;
+DELIMITER $$
+CREATE PROCEDURE sp_BaoCaoDanhSachThanhVien(IN p_MaBan VARCHAR(255), IN p_TrangThai VARCHAR(255))
+BEGIN
+    DECLARE v_MaBan VARCHAR(255);
+    DECLARE v_TrangThai VARCHAR(255);
+    SET v_MaBan = NULLIF(TRIM(p_MaBan), '');
+    SET v_TrangThai = NULLIF(TRIM(p_TrangThai), '');
+    IF v_MaBan IS NOT NULL AND NOT EXISTS (SELECT 1 FROM BanChuyenMon WHERE MaBan = v_MaBan) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ban chuyên môn không tồn tại';
+    END IF;
+    IF v_TrangThai IS NOT NULL AND v_TrangThai NOT IN ('Đang hoạt động', 'Tạm nghỉ', 'Đã rời CLB') THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Trạng thái phải là Đang hoạt động, Tạm nghỉ hoặc Đã rời CLB';
+    END IF;
+    SELECT MSV, HoVaTen, NgaySinh, GioiTinh, Email, SDT, NgayGiaNhap, TrangThaiHD, MaBan, TenBan, ChucVu
+    FROM vw_ThanhVienChiTiet
+    WHERE (v_MaBan IS NULL OR MaBan = v_MaBan)
+      AND (v_TrangThai IS NULL OR TrangThaiHD = v_TrangThai)
+    ORDER BY MaBan,
+             CASE ChucVu WHEN 'Chủ nhiệm' THEN 1 WHEN 'Phó chủ nhiệm' THEN 2
+                         WHEN 'Trưởng ban' THEN 3 WHEN 'Phó ban' THEN 4 ELSE 5 END,
+             MSV;
+END$$
+DELIMITER ;
+
+-- Báo cáo 2: Tổng hợp hoạt động của thành viên trong một kỳ (LIÊN MODULE).
+-- Người lập: Ban Chủ nhiệm (phụ trách nhân sự). Gửi: Chủ nhiệm và giảng viên phụ trách, để xét khen thưởng, ghi nhận.
+-- Đếm số lần tham gia khóa học, dự án, sự kiện, số lần được đánh giá, phiếu mượn, giao dịch thu chi
+-- có ngày nằm trong [p_TuNgay, p_DenNgay]. Chỉ tính thành viên đã gia nhập trước hoặc trong ngày kết thúc kỳ.
+DROP PROCEDURE IF EXISTS sp_BaoCaoHoatDongThanhVien;
+DELIMITER $$
+CREATE PROCEDURE sp_BaoCaoHoatDongThanhVien(IN p_TuNgay DATE, IN p_DenNgay DATE)
+BEGIN
+    IF p_TuNgay IS NULL OR p_DenNgay IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cần nhập cả từ ngày và đến ngày';
+    END IF;
+    IF p_DenNgay < p_TuNgay THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Đến ngày không được trước từ ngày';
+    END IF;
+    SELECT tv.MSV, tv.HoVaTen, b.TenBan, tv.ChucVu, tv.TrangThaiHD,
+           COUNT(CASE WHEN h.LoaiHoatDong = 'Khóa học' THEN 1 END)  AS SoKhoaHoc,
+           COUNT(CASE WHEN h.LoaiHoatDong = 'Dự án' THEN 1 END)     AS SoDuAn,
+           COUNT(CASE WHEN h.LoaiHoatDong = 'Sự kiện' THEN 1 END)   AS SoSuKien,
+           COUNT(CASE WHEN h.LoaiHoatDong = 'Đánh giá' THEN 1 END)  AS SoDanhGia,
+           COUNT(CASE WHEN h.LoaiHoatDong = 'Phiếu mượn' THEN 1 END) AS SoPhieuMuon,
+           COUNT(CASE WHEN h.LoaiHoatDong = 'Thu chi' THEN 1 END)   AS SoGiaoDich,
+           COUNT(h.MaHoatDong) AS TongHoatDong
+    FROM ThanhVien tv
+    JOIN BanChuyenMon b ON b.MaBan = tv.MaBan
+    LEFT JOIN vw_LichSuHoatDong h
+           ON h.MSV = tv.MSV AND h.Ngay >= p_TuNgay AND h.Ngay <= p_DenNgay
+    WHERE tv.NgayGiaNhap <= p_DenNgay
+    GROUP BY tv.MSV, tv.HoVaTen, b.TenBan, tv.ChucVu, tv.TrangThaiHD
+    ORDER BY TongHoatDong DESC, tv.MSV;
 END$$
 DELIMITER ;

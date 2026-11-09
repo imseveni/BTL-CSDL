@@ -1,4 +1,6 @@
 -- Module 06 (Quản lý Sự kiện) – truy vấn / view / stored procedure / trigger. Phụ trách: Minh
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 USE QuanLyCauLacBo;
 
 -- =====================================================================

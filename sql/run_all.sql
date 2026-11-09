@@ -2,6 +2,8 @@
 -- (hoặc trong mysql client:  SOURCE run_all.sql;)
 -- Thứ tự: schema -> seed nền -> seed từng module -> truy vấn từng module
 
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 SOURCE 00_schema/schema.sql;
 SOURCE 01_seed_master/seed_master.sql;
 

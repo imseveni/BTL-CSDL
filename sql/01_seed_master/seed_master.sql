@@ -7,6 +7,8 @@
 --   * Quyền hạn:  QH01..QH05
 -- Quy ước: B21DCCN001 là Chủ nhiệm (có đủ quyền), B21DCCN002 là Phó chủ nhiệm.
 -- =====================================================================
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 USE QuanLyCauLacBo;
 
 -- 1. Ban chuyên môn

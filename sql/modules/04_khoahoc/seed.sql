@@ -1,5 +1,7 @@
 -- Module 04 (Quản lý Khóa học) – dữ liệu mẫu. Phụ trách: Chiến
 -- Dùng dải mã riêng (vd KH01.., DA01..) để không trùng với module khác.
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 USE QuanLyCauLacBo;
 
 INSERT INTO KhoaHoc (MaKhoaHoc, TenKhoaHoc, NgayKhaiGiang, NgayBeGiang) VALUES

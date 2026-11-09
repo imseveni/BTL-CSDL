@@ -18,11 +18,23 @@ class ThanhVienServiceTest {
         String tuKhoa;
         String maBan;
         String trangThaiLoc;
+        String banBaoCao;
+        String trangThaiBaoCao;
+        LocalDate tuBaoCao;
+        LocalDate denBaoCao;
 
         @Override public void them(ThanhVien tv) { themVao = tv; }
         @Override public void capNhat(ThanhVien tv) { capNhatVao = tv; }
         @Override public void doiTrangThai(String msv, String tt) { msvDoi = msv; trangThaiDoi = tt; }
         @Override public void xoa(String msv) { msvXoa = msv; }
+        @Override public List<ThanhVien> baoCaoDanhSach(String ban, String tt) {
+            banBaoCao = ban; trangThaiBaoCao = tt;
+            return List.of();
+        }
+        @Override public List<TongHopHoatDong> baoCaoHoatDong(LocalDate tu, LocalDate den) {
+            tuBaoCao = tu; denBaoCao = den;
+            return List.of();
+        }
         @Override public List<ThanhVien> giaNhap(LocalDate tu, LocalDate den) { return List.of(); }
         @Override public List<ThanhVien> tim(String tk, String ban, String tt) {
             tuKhoa = tk; maBan = ban; trangThaiLoc = tt;
@@ -131,5 +143,33 @@ class ThanhVienServiceTest {
                 () -> service.giaNhap(LocalDate.of(2026, 2, 1), LocalDate.of(2026, 1, 1)));
         assertDoesNotThrow(() -> service.giaNhap(null, LocalDate.of(2026, 1, 1)));
         assertDoesNotThrow(() -> service.giaNhap(LocalDate.of(2026, 1, 1), null));
+    }
+
+    @Test void baoCaoDanhSachChuanHoaThamSoVaChanTrangThaiLa() {
+        var dao = new FakeDao();
+        var service = new ThanhVienService(dao);
+        service.baoCaoDanhSach(" BAN01 ", " Tạm nghỉ ");
+        assertEquals("BAN01", dao.banBaoCao);
+        assertEquals("Tạm nghỉ", dao.trangThaiBaoCao);
+        service.baoCaoDanhSach("", " ");
+        assertNull(dao.banBaoCao);
+        assertNull(dao.trangThaiBaoCao);
+        assertThrows(IllegalArgumentException.class, () -> service.baoCaoDanhSach(null, "Bay mất"));
+        assertThrows(IllegalArgumentException.class, () -> service.baoCaoDanhSach("b".repeat(21), null));
+    }
+
+    @Test void baoCaoHoatDongCanDuHaiNgayVaKhongDaoNguoc() {
+        var dao = new FakeDao();
+        var service = new ThanhVienService(dao);
+        service.baoCaoHoatDong(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 6, 30));
+        assertEquals(LocalDate.of(2026, 1, 1), dao.tuBaoCao);
+        assertEquals(LocalDate.of(2026, 6, 30), dao.denBaoCao);
+        dao.tuBaoCao = null;
+        assertDoesNotThrow(() -> service.baoCaoHoatDong(LocalDate.of(2026, 3, 3), LocalDate.of(2026, 3, 3)));
+        assertThrows(IllegalArgumentException.class, () -> service.baoCaoHoatDong(null, LocalDate.of(2026, 6, 30)));
+        assertThrows(IllegalArgumentException.class, () -> service.baoCaoHoatDong(LocalDate.of(2026, 1, 1), null));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.baoCaoHoatDong(LocalDate.of(2026, 7, 1), LocalDate.of(2026, 6, 30)));
+        assertEquals(LocalDate.of(2026, 3, 3), dao.tuBaoCao);    // các ca sai không chạm tới Dao
     }
 }

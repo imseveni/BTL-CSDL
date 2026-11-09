@@ -36,12 +36,12 @@ Các module đã chạy riêng lẻ trên MySQL, nhưng **chưa có bằng chứ
 ## 4. Cách dựng và kiểm tra (chạy trên MySQL của bạn)
 
 ```bash
-cd sql
-mysql -u root -p < reset_db.sql
-mysql -u root -p < run_all.sql                 # phải thoát với mã 0
-mysql -u root -p < 02_security/phan_quyen.sql  # tùy chọn, cần quyền CREATE ROLE
+cd sql        # chạy trong cmd; luôn giữ cờ --default-character-set=utf8mb4 để không hỏng chữ tiếng Việt
+mysql --default-character-set=utf8mb4 -u root -p < reset_db.sql
+mysql --default-character-set=utf8mb4 -u root -p < run_all.sql                 # phải thoát với mã 0
+mysql --default-character-set=utf8mb4 -u root -p < 02_security/phan_quyen.sql  # tùy chọn, cần quyền CREATE ROLE
 for m in 01_thanhvien 02_banchuyenmon 03_quyenhan 04_khoahoc 05_duan 06_sukien 07_thuchi 08_danhgia 09_cosovatchat 10_muontra; do
-  mysql -u root -p < modules/$m/tests.sql      # mong đợi dòng PASS ... của từng module
+  mysql --default-character-set=utf8mb4 -u root -p < modules/$m/tests.sql      # mong đợi dòng PASS ... của từng module
 done
 cd ..
 mvn test                                       # test không cần MySQL
@@ -59,11 +59,15 @@ Nếu `tests.sql` của module nào không in dòng PASS, dán lỗi vào Issue 
 - [ ] Bật bảo vệ nhánh `main`, `develop` trên GitHub (bắt buộc Pull Request).
 - [ ] Rà lại tên tác giả trong lịch sử Git và README trước khi nộp.
 
-## 6. Tiến độ giao diện Swing
+## 6. Bản demo module Thành viên
+
+Module Thành viên đã đủ các tiêu chí 1, 3, 4, 5, 6, 7 và báo cáo mục 8 (ngắn): xem [`docs/bao-cao-btl/thanh-vien/`](../bao-cao-btl/thanh-vien/BAO_CAO_THANH_VIEN.md) và kịch bản demo [`KICH_BAN_DEMO.md`](../bao-cao-btl/thanh-vien/KICH_BAN_DEMO.md). Tab Thành viên trong ứng dụng gồm hai tab con: *Quản lý thành viên* (có tìm kiếm, thêm, sửa, quyền hạn, lịch sử hoạt động) và *Báo cáo* (xem trên màn hình, xuất Excel).
+
+## 7. Tiến độ giao diện Swing
 
 | Module | Màn hình Swing | Người làm |
 |---|---|---|
-| 01 Thành viên | Xong (mẫu của nhóm) | Tú |
+| 01 Thành viên | Xong (mẫu của nhóm; có tab Báo cáo và tab Quyền hạn) | Tú |
 | 02 Ban chuyên môn | Chưa | Đông |
 | 03 Quyền hạn | Chưa | Đông |
 | 04 Khóa học | Xong | Chiến |

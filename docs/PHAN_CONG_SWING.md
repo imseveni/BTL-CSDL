@@ -1,5 +1,7 @@
 # Phân công giai đoạn Swing (Giai đoạn 1)
 
+> **Cập nhật theo tiêu chí chấm của cô:** chỉ cần 2 màn hình nhập, 1 màn hình tìm kiếm và 2 báo cáo xuất file, đã có 3 màn hình (Thành viên, Khóa học, Dự án). Các màn hình Swing còn lại trong tài liệu này chuyển thành **tùy chọn**, chỉ làm sau khi xong các việc trong [KE_HOACH_THEO_TIEU_CHI.md](KE_HOACH_THEO_TIEU_CHI.md).
+
 Giai đoạn 0 (Tú) đã xong: cửa sổ chính 10 tab, màn hình mẫu Thành viên, bảng đăng ký module, hướng dẫn. Đọc [SWING_HUONG_DAN.md](SWING_HUONG_DAN.md) trước khi bắt đầu. Mỗi người **chỉ sửa trong package module của mình**; cần đổi `common/`, `app/`, `config/`, `pom.xml` hoặc schema thì tạo Issue cho Tú.
 
 ## 1. Bảng tổng quan

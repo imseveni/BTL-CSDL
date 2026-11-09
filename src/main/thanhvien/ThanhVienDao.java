@@ -73,6 +73,20 @@ public class ThanhVienDao {
                 rs -> new BanLuaChon(rs.getString("MaBan"), rs.getString("TenBan")));
     }
 
+    /** Báo cáo 1: danh sách thành viên theo ban (đã sắp theo ban, chức vụ, MSV). Ban và trạng thái tùy chọn. */
+    public List<ThanhVien> baoCaoDanhSach(String maBan, String trangThai) {
+        return query("CALL sp_BaoCaoDanhSachThanhVien(?, ?)", ThanhVienDao::mapThanhVien, maBan, trangThai);
+    }
+
+    /** Báo cáo 2: số hoạt động của từng thành viên trong khoảng ngày [tuNgay, denNgay]. */
+    public List<TongHopHoatDong> baoCaoHoatDong(LocalDate tuNgay, LocalDate denNgay) {
+        return query("CALL sp_BaoCaoHoatDongThanhVien(?, ?)", rs -> new TongHopHoatDong(
+                rs.getString("MSV"), rs.getString("HoVaTen"), rs.getString("TenBan"), rs.getString("ChucVu"),
+                rs.getString("TrangThaiHD"), rs.getLong("SoKhoaHoc"), rs.getLong("SoDuAn"), rs.getLong("SoSuKien"),
+                rs.getLong("SoDanhGia"), rs.getLong("SoPhieuMuon"), rs.getLong("SoGiaoDich"),
+                rs.getLong("TongHoatDong")), tuNgay, denNgay);
+    }
+
     public List<ThongKeTrangThai> thongKeTrangThai() {
         return query("SELECT TrangThaiHD, SoThanhVien FROM vw_ThongKeTrangThaiThanhVien ORDER BY TrangThaiHD",
                 rs -> new ThongKeTrangThai(rs.getString("TrangThaiHD"), rs.getLong("SoThanhVien")));

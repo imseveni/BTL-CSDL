@@ -1,4 +1,6 @@
 -- Phụ trách: Đông. Chạy lại được; không thay đổi schema dùng chung.
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 USE QuanLyCauLacBo;
 
 DROP VIEW IF EXISTS vw_BanChuyenMonThongKe;
