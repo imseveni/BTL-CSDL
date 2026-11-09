@@ -1,7 +1,6 @@
 package thanhvien;
 
 import common.AppModule;
-import common.ConsoleUtil;
 
 import java.util.Scanner;
 
@@ -20,7 +19,6 @@ public class ThanhVienModule implements AppModule {
 
     @Override
     public void run(Scanner in) {
-        // TODO(Tú): gọi menu (ThanhVienUi) khi đã cài đặt
-        ConsoleUtil.todo(getName());
+        new ThanhVienUi().run(in);
     }
 }

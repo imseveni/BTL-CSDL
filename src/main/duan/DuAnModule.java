@@ -1,26 +1,12 @@
 package duan;
 
-import common.AppModule;
-import common.ConsoleUtil;
+import common.Database;
 
-import java.util.Scanner;
+/** Adapter cho menu chung List<AppModule> của repo BTL-CSDL. */
+public class DuAnModule {
 
-/**
- * Module 05: Quản lý Dự án.
- * Người phụ trách: Chiến.
- * Các file trong package này đặt tên theo hậu tố: X.java (thực thể), XDao.java (truy cập DB),
- * XService.java (nghiệp vụ), XUi.java (menu console).
- */
-public class DuAnModule implements AppModule {
+    public static DuAnSwingUi createSwingUi() {
 
-    @Override
-    public String getName() {
-        return "Quản lý Dự án";
-    }
-
-    @Override
-    public void run(Scanner in) {
-        // TODO(Chiến): gọi menu (DuAnUi) khi đã cài đặt
-        ConsoleUtil.todo(getName());
+        return new DuAnSwingUi(new DuAnService(new DuAnDao(Database::getConnection)));
     }
 }

@@ -100,7 +100,7 @@ Ca sai (mỗi ca kiểm tra thêm dữ liệu không bị đổi): ngày hẹn t
 Kết quả chạy trên MySQL (điền sau khi chạy thật):
 
 ```text
-(dán output của: mysql -u root -p < sql/modules/10_muontra/tests.sql)
+(dán output của: mysql --default-character-set=utf8mb4 -u root -p < sql/modules/10_muontra/tests.sql)
 ```
 
 Unit test Java (`mvn test`): `PhieuMuonServiceTest` 6 ca, `CoSoVatChatServiceTest` 4 ca, `MuonTraMenuTest` 8 ca, đều dùng Dao giả. Ca tích hợp MySQL `MuonTraDatabaseTest` (2 ca, đi qua Service → Dao → JDBC → thủ tục/trigger/view) bật bằng `mvn "-Dclb.mysql.tests=true" test` trên DB thử riêng.

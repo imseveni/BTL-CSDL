@@ -1,9 +1,8 @@
 package thuchi;
 
-import common.AppModule;
-import common.ConsoleUtil;
-
 import java.util.Scanner;
+
+import common.AppModule;
 
 /**
  * Module 07: Quản lý Thu – Chi.
@@ -20,7 +19,6 @@ public class ThuChiModule implements AppModule {
 
     @Override
     public void run(Scanner in) {
-        // TODO(Minh): gọi menu (ThuChiUi) khi đã cài đặt
-        ConsoleUtil.todo(getName());
+        new ThuChiUi().run(in);
     }
 }

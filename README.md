@@ -4,7 +4,7 @@ Hệ thống quản lý Câu lạc bộ sinh viên: thành viên, ban chuyên m�
 sự kiện, thu–chi, đánh giá, cơ sở vật chất và mượn–trả.
 
 **Công nghệ:** Java 17 · Maven · MySQL 8.0.16+ · JDBC · JUnit 5
-**Giao diện:** menu console (khung ban đầu; có thể nâng cấp sau mà không đổi tầng dao/service).
+**Giao diện:** cửa sổ Swing một cửa sổ, 10 tab (mỗi module một tab); module nào chưa có màn hình thì hiện màn hình tạm ghi tên người phụ trách. Menu dòng lệnh cũ vẫn dùng được bằng tham số `--console`. Hướng dẫn: [`docs/SWING_HUONG_DAN.md`](docs/SWING_HUONG_DAN.md), phân công: [`docs/PHAN_CONG_SWING.md`](docs/PHAN_CONG_SWING.md).
 
 ## Thành viên nhóm
 | Thành viên | Vai trò | Module |
@@ -29,22 +29,23 @@ quan-ly-clb/
 │   ├── HUONG_DAN_THUC_HIEN.md  hướng dẫn từng người làm phần của mình
 │   ├── PHAN_CONG.md          phân công + checklist từng người
 │   ├── DECISIONS.md          các điểm mâu thuẫn cần chốt
-│   ├── bao-cao/              báo cáo theo module
-│   └── erd/                  hình ERD và mô hình quan hệ (2 file .png)
+│   ├── bao-cao/              báo cáo từng module + TONG_HOP.md (trạng thái toàn dự án)
+│   └── erd/                  ERD, mô hình quan hệ đầy đủ (Mo_hinh_quan_he_day_du.png/.svg)
 ├── sql/
 │   ├── 00_schema/schema.sql      tạo bảng (chỉ Tú sửa)
 │   ├── 01_seed_master/           dữ liệu nền dùng chung
+│   ├── 02_security/phan_quyen.sql  vai trò và quyền MySQL (chạy riêng, cần quyền root)
 │   ├── modules/NN_<module>/      seed.sql, queries.sql, tests.sql của từng module
 │   ├── run_all.sql               chạy toàn bộ theo thứ tự
 │   └── reset_db.sql              xóa DB để dựng lại
 ├── src/main/
-│   ├── app/            Main, MainMenu (đăng ký module)
-│   ├── config/         DBConnection
-│   ├── common/         AppModule, ConsoleUtil, DataAccessException
+│   ├── app/            Main, SwingApp, ClubWorkspace (cửa sổ chính), SwingModules (đăng ký tab), MainMenu (console)
+│   ├── config/         DBConnection (dùng chung cấu hình với common.Database)
+│   ├── common/         AppModule, Database, Validation, ConsoleUtil, DataAccessException
 │   ├── thanhvien/      ThanhVienModule + (Dao, Service, Ui... do chủ module thêm)
 │   ├── ... (10 thư mục module, mỗi thư mục một package phẳng)
 │   └── resources/      db.properties.example
-└── src/test/           test JUnit (app/MainMenuTest.java)
+└── src/test/           test JUnit của từng module
 ```
 
 ## Cách chạy
@@ -52,9 +53,12 @@ quan-ly-clb/
 2. Dựng CSDL (chạy trong thư mục `sql/`):
    ```bash
    cd sql
-   mysql -u root -p < run_all.sql
+   mysql --default-character-set=utf8mb4 -u root -p < run_all.sql
    ```
-   Dựng lại từ đầu: `mysql -u root -p < reset_db.sql` rồi chạy lại `run_all.sql`.
+   Dựng lại từ đầu: `mysql --default-character-set=utf8mb4 -u root -p < reset_db.sql` rồi chạy lại `run_all.sql`.
+   > **Windows:** chạy trong **Command Prompt (cmd)**; PowerShell không hỗ trợ dấu `<`. Cũng có thể mở `mysql --default-character-set=utf8mb4 -u root -p` rồi gõ `SOURCE run_all.sql;`.
+   > **Luôn giữ `--default-character-set=utf8mb4`.** Mọi file SQL đã có `SET NAMES utf8mb4;`, nhưng cờ này là lớp bảo vệ thứ hai.
+   > **Nếu chữ tiếng Việt trong bảng bị hỏng** (ví dụ `Nguyß╗àn V─ân An`): dữ liệu đã nạp sai bảng mã. Kiểm tra bằng `SELECT HEX(HoVaTen) FROM ThanhVien WHERE MSV='B21DCCN001';`: chữ đúng bắt đầu bằng `4E677579E1BB856E` (Nguyễn). Cách sửa: chạy lại `reset_db.sql` rồi `run_all.sql` bằng lệnh có cờ `--default-character-set=utf8mb4` như trên.
 3. Cấu hình kết nối:
    ```bash
    cp src/main/resources/db.properties.example src/main/resources/db.properties
@@ -62,9 +66,17 @@ quan-ly-clb/
    ```
 4. Chạy ứng dụng:
    ```bash
-   mvn compile exec:java
+   mvn compile exec:java                          # cửa sổ Swing
+   mvn compile exec:java -Dexec.args="--console"  # menu dòng lệnh
    ```
-5. Chạy test: `mvn test`
+5. Chạy test: `mvn test` (không cần MySQL); thêm test tích hợp: `mvn test -Dclb.mysql.tests=true` (cần DB đã chạy `run_all.sql`).
+6. Phân quyền MySQL (tùy chọn): `mysql --default-character-set=utf8mb4 -u root -p < sql/02_security/phan_quyen.sql`.
+
+Trạng thái toàn dự án và việc còn lại: [`docs/bao-cao/TONG_HOP.md`](docs/bao-cao/TONG_HOP.md).
+Bản demo module Thành viên (báo cáo, kịch bản demo, ảnh, file Excel mẫu): [`docs/bao-cao-btl/thanh-vien/`](docs/bao-cao-btl/thanh-vien/BAO_CAO_THANH_VIEN.md).
+Đánh giá theo tiêu chí chấm và kế hoạch hoàn thiện: [`docs/KE_HOACH_THEO_TIEU_CHI.md`](docs/KE_HOACH_THEO_TIEU_CHI.md).
+
+> **Chữ tiếng Việt bị hiện thành `?`:** chương trình đã tự đổi console sang UTF-8 khi chạy trong Command Prompt, PowerShell, Windows Terminal. Nếu chạy trong IDE thì đặt encoding của cửa sổ chạy thành UTF-8: IntelliJ IDEA thêm `-Dfile.encoding=UTF-8` vào VM options của cấu hình Run; Eclipse chọn Run Configurations, tab Common, mục Encoding, chọn UTF-8; VS Code chạy `chcp 65001` trong terminal trước. Nên dùng phông chữ hỗ trợ tiếng Việt cho console (ví dụ Consolas hoặc Cascadia Mono).
 
 ## Thêm chức năng vào module của bạn
 1. Viết SQL (seed, truy vấn, thủ tục, trigger) trong `sql/modules/NN_<module>/`.

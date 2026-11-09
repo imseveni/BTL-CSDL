@@ -12,3 +12,4 @@ target/
 Thumbs.db
 # Cấu hình DB cá nhân (KHÔNG commit mật khẩu)
 src/main/resources/db.properties
+src/main/resources/database-local.properties

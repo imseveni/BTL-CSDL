@@ -63,7 +63,7 @@ Seed dùng mã riêng `TB09_01`…`TB09_08`, chạy lại không chèn trùng. N
 Kết quả chạy trên MySQL (điền sau khi chạy thật):
 
 ```text
-(dán output của: mysql -u root -p < sql/modules/09_cosovatchat/tests.sql)
+(dán output của: mysql --default-character-set=utf8mb4 -u root -p < sql/modules/09_cosovatchat/tests.sql)
 ```
 
 Unit test Java: `CoSoVatChatServiceTest` (4 ca, Dao giả) và các ca menu trong `MuonTraMenuTest` chạy bằng `mvn test`; ca tích hợp MySQL trong `MuonTraDatabaseTest` bật bằng `mvn "-Dclb.mysql.tests=true" test`.

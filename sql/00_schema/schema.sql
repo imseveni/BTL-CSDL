@@ -5,6 +5,8 @@
 -- Các chỗ đánh dấu [FIX #n] là điểm lệch so với bản mô tả gốc, xem docs/DECISIONS.md.
 -- =====================================================================
 
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 CREATE DATABASE IF NOT EXISTS QuanLyCauLacBo
     CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE QuanLyCauLacBo;
@@ -194,7 +196,7 @@ CREATE TABLE PhieuMuon (
         ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
--- 15. CoSoVatChat  [FIX #3] ERD không có TinhTrang; [FIX #4] quan hệ 'Quản lý' (1 TV – N thiết bị) -> MSVQuanLy ở đây
+-- 15. CoSoVatChat  [FIX #3] ERD không có TinhTrang; [FIX #4] mỗi thiết bị có tối đa 1 thành viên quản lý
 CREATE TABLE CoSoVatChat (
     MaThietBi      VARCHAR(20) PRIMARY KEY,
     TenThietBi     VARCHAR(150) NOT NULL,
@@ -209,7 +211,7 @@ CREATE TABLE CoSoVatChat (
         ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
--- 16. ChiTietMuon
+-- 16. ChiTietMuon (quan hệ 'Mượn' giữa PhieuMuon và CoSoVatChat)
 CREATE TABLE ChiTietMuon (
     MaPhieuMuon   VARCHAR(20),
     MaThietBi     VARCHAR(20),

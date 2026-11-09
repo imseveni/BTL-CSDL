@@ -1,7 +1,6 @@
 package sukien;
 
 import common.AppModule;
-import common.ConsoleUtil;
 
 import java.util.Scanner;
 
@@ -20,7 +19,6 @@ public class SuKienModule implements AppModule {
 
     @Override
     public void run(Scanner in) {
-        // TODO(Minh): gọi menu (SuKienUi) khi đã cài đặt
-        ConsoleUtil.todo(getName());
+        new SuKienUi().run(in);
     }
 }

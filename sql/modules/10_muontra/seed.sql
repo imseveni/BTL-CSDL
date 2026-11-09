@@ -1,4 +1,6 @@
 -- Phụ trách: Trường. Chạy lại được; không thay đổi schema dùng chung.
+-- Báo cho MySQL biết file này là UTF-8 (nếu thiếu, console Windows làm hỏng chữ tiếng Việt khi nạp).
+SET NAMES utf8mb4;
 USE QuanLyCauLacBo;
 
 -- Mã riêng PM10_*; thiết bị dùng TB09_* của seed module 09 (phải chạy trước, đúng thứ tự run_all.sql).

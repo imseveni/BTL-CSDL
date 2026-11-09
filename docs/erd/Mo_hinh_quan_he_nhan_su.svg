@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1480" height="1000" viewBox="0 0 1480 1000" role="img" aria-labelledby="title desc">
+<title id="title">Mô hình quan hệ bổ sung phần nhân sự – Đông</title>
+<desc id="desc">Ban chuyên môn liên kết một nhiều với Thành viên. Quyền hạn liên kết nhiều nhiều với Thành viên qua bảng ThanhVien_QuyenHan. Mỗi Đánh giá thuộc một Thành viên.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#52627a"/></marker></defs>
+<style>text{font-family:'Segoe UI',Arial,sans-serif;fill:#172b46}.title{font-size:30px;font-weight:700}.sub{font-size:17px;fill:#52627a}.table-title{font-size:21px;font-weight:700}.field{font-size:18px}.type{font-size:15px;fill:#52627a}.note{font-size:17px;fill:#52627a}.card{font-size:17px;font-weight:700;fill:#344969}.line{fill:none;stroke:#52627a;stroke-width:2;marker-end:url(#arrow)}</style>
+<rect width="1480" height="1000" fill="#f6f8fb"/>
+<text x="60" y="66" class="title">Mô hình quan hệ · Phần nhân sự</text>
+<text x="60" y="102" class="sub">Bổ sung theo DECISIONS #10 · Người thực hiện: Đông · Đối chiếu schema.sql</text>
+
+<rect x="60" y="160" width="360" height="134" rx="10" fill="white" stroke="#3b587b" stroke-width="2"/>
+<path d="M70 160H410Q420 160 420 170V208H60V170Q60 160 70 160Z" fill="#e8eef7"/>
+<text x="78" y="192" class="table-title" >BanChuyenMon</text>
+<text x="78" y="237" class="field" >PK  MaBan</text>
+<text x="402" y="237" class="type" text-anchor="end">VARCHAR(20)</text>
+<text x="78" y="268" class="field" >TenBan</text>
+<text x="402" y="268" class="type" text-anchor="end">VARCHAR(100)</text>
+<rect x="530" y="160" width="400" height="320" rx="10" fill="white" stroke="#3b587b" stroke-width="2"/>
+<path d="M540 160H920Q930 160 930 170V208H530V170Q530 160 540 160Z" fill="#e8eef7"/>
+<text x="548" y="192" class="table-title" >ThanhVien</text>
+<text x="548" y="237" class="field" >PK  MSV</text>
+<text x="912" y="237" class="type" text-anchor="end">VARCHAR(20)</text>
+<text x="548" y="268" class="field" >HoVaTen</text>
+<text x="912" y="268" class="type" text-anchor="end">VARCHAR(100)</text>
+<text x="548" y="299" class="field" >NgaySinh</text>
+<text x="912" y="299" class="type" text-anchor="end">DATE · NULL</text>
+<text x="548" y="330" class="field" >GioiTinh</text>
+<text x="912" y="330" class="type" text-anchor="end">VARCHAR(20)</text>
+<text x="548" y="361" class="field" >NgayGiaNhap</text>
+<text x="912" y="361" class="type" text-anchor="end">DATE</text>
+<text x="548" y="392" class="field" >TrangThaiHD</text>
+<text x="912" y="392" class="type" text-anchor="end">VARCHAR(50)</text>
+<text x="548" y="423" class="field" >FK  MaBan</text>
+<text x="912" y="423" class="type" text-anchor="end">VARCHAR(20)</text>
+<text x="548" y="454" class="field" >ChucVu</text>
+<text x="912" y="454" class="type" text-anchor="end">VARCHAR(100)</text>
+<rect x="1050" y="160" width="370" height="165" rx="10" fill="white" stroke="#0b7369" stroke-width="2"/>
+<path d="M1060 160H1410Q1420 160 1420 170V208H1050V170Q1050 160 1060 160Z" fill="#e1f4ef"/>
+<text x="1068" y="192" class="table-title" >QuyenHan</text>
+<text x="1068" y="237" class="field" >PK  MaQuyenHan</text>
+<text x="1402" y="237" class="type" text-anchor="end">VARCHAR(20)</text>
+<text x="1068" y="268" class="field" >TenQuyenHan</text>
+<text x="1402" y="268" class="type" text-anchor="end">VARCHAR(100)</text>
+<text x="1068" y="299" class="field" >MoTaChiTiet</text>
+<text x="1402" y="299" class="type" text-anchor="end">TEXT · NULL</text>
+<rect x="1050" y="560" width="370" height="162" rx="10" fill="white" stroke="#0b7369" stroke-width="2"/>
+<path d="M1060 560H1410Q1420 560 1420 570V608H1050V570Q1050 560 1060 560Z" fill="#e1f4ef"/>
+<text x="1068" y="592" class="table-title" >ThanhVien_QuyenHan</text>
+<text x="1068" y="637" class="field" >PK, FK  MSV</text>
+<text x="1402" y="637" class="type" text-anchor="end">VARCHAR(20)</text>
+<text x="1068" y="668" class="field" >PK, FK  MaQuyenHan</text>
+<text x="1402" y="668" class="type" text-anchor="end">VARCHAR(20)</text>
+<text x="1068" y="699" class="type" >PK ghép: (MSV, MaQuyenHan)</text>
+<rect x="60" y="560" width="580" height="258" rx="10" fill="white" stroke="#0b7369" stroke-width="2"/>
+<path d="M70 560H630Q640 560 640 570V608H60V570Q60 560 70 560Z" fill="#e1f4ef"/>
+<text x="78" y="592" class="table-title" >DanhGia</text>
+<text x="78" y="637" class="field" >PK  MaGhiNhan</text>
+<text x="622" y="637" class="type" text-anchor="end">VARCHAR(20)</text>
+<text x="78" y="668" class="field" >LoaiDanhGia</text>
+<text x="622" y="668" class="type" text-anchor="end">VARCHAR(100) · NULL</text>
+<text x="78" y="699" class="field" >HinhThuc</text>
+<text x="622" y="699" class="type" text-anchor="end">VARCHAR(100) · NULL</text>
+<text x="78" y="730" class="field" >LyDo</text>
+<text x="622" y="730" class="type" text-anchor="end">TEXT · NULL</text>
+<text x="78" y="761" class="field" >NgayQuyetDinh</text>
+<text x="622" y="761" class="type" text-anchor="end">DATE · NOT NULL</text>
+<text x="78" y="792" class="field" >FK  MSV</text>
+<text x="622" y="792" class="type" text-anchor="end">VARCHAR(20) · NOT NULL</text>
+<path class="line" d="M530 237 H420"/>
+<path class="line" d="M1050 620 H990 V330 H930"/>
+<path class="line" d="M1235 560 V330"/>
+<path class="line" d="M640 665 H760 V480"/>
+<text x="435" y="222" class="card" >1</text>
+<text x="479" y="222" class="card" >0..N</text>
+<text x="942" y="313" class="card" >1</text>
+<text x="997" y="605" class="card" >0..N</text>
+<text x="1248" y="350" class="card" >1</text>
+<text x="1248" y="545" class="card" >0..N</text>
+<text x="773" y="505" class="card" >1</text>
+<text x="660" y="649" class="card" >0..N</text>
+<rect x="60" y="860" width="1360" height="103" rx="10" fill="#e8eef7"/>
+<text x="80" y="890" class="note" >PK = khóa chính; FK = khóa ngoại. Màu xanh lá: ba bảng được bổ sung vào mô hình trang 3.</text>
+<text x="80" y="918" class="note" >FK TV–Quyền hạn: DELETE CASCADE. FK Đánh giá và Ban chuyên môn: DELETE RESTRICT.</text>
+<text x="80" y="946" class="note" >Tất cả FK ở đây: UPDATE CASCADE. Thành viên bắt buộc thuộc một ban; mỗi đánh giá bắt buộc có một MSV.</text>
+</svg>

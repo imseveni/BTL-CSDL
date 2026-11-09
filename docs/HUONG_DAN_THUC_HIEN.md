@@ -19,10 +19,10 @@ Việc nào chưa rõ thì tạo Issue hỏi Tú, đừng tự sửa file của 
 ### A2. Quy trình mỗi lần làm việc
 1. `git checkout develop && git pull`
 2. `git checkout -b feature/<module>-<mô-tả>` (ví dụ `feature/khoahoc-tra-cuu`)
-3. Dựng DB sạch: `cd sql && mysql -u root -p < reset_db.sql && mysql -u root -p < run_all.sql`
+3. Dựng DB sạch: `cd sql && mysql --default-character-set=utf8mb4 -u root -p < reset_db.sql && mysql --default-character-set=utf8mb4 -u root -p < run_all.sql`
 4. Làm việc theo A3 và A4 bên dưới.
 5. Chạy lại bước 3 từ DB trống, không được có lỗi.
-6. `git add`, `git commit -m "[module] mô tả"`, `git pull --rebase origin develop`, `git push`
+6. `git add`, `git commit -m "feat(khoahoc): mô tả ngắn"` (đúng dạng `<loại>(<module>): <mô tả>`, xem `CONTRIBUTING.md`), `git pull --rebase origin develop`, `git push`
 7. Mở Pull Request vào `develop`, điền checklist trong template, chờ Tú review.
 
 ### A3. Thư mục của bạn: viết SQL
@@ -203,7 +203,7 @@ Email và SĐT là thuộc tính đơn trị, mỗi thành viên có một giá 
 ### B5. Trường: Module 09, 10
 
 **Module 09, Cơ sở vật chất**
-- Bảng: `CoSoVatChat` (MaThietBi, TenThietBi, TongSoLuong, SoLuongKhaDung, MSVQuanLy). Quan hệ "Quản lý": 1 thành viên quản lý nhiều thiết bị.
+- Bảng: `CoSoVatChat` (MaThietBi, TenThietBi, TongSoLuong, SoLuongKhaDung, MSVQuanLy). Quan hệ "Quản lý": 1 thành viên quản lý nhiều thiết bị; mỗi thiết bị có tối đa 1 người quản lý (cho phép NULL).
 - Việc: thêm, sửa thiết bị; xem danh sách thiết bị và số lượng khả dụng; gán hoặc đổi thành viên quản lý; kiểm tra số lượng khả dụng.
 - Test gợi ý: `SoLuongKhaDung` lớn hơn `TongSoLuong` bị chặn.
 

@@ -1,7 +1,6 @@
 package banchuyenmon;
 
 import common.AppModule;
-import common.ConsoleUtil;
 
 import java.util.Scanner;
 
@@ -20,7 +19,6 @@ public class BanChuyenMonModule implements AppModule {
 
     @Override
     public void run(Scanner in) {
-        // TODO(Đông): gọi menu (BanChuyenMonUi) khi đã cài đặt
-        ConsoleUtil.todo(getName());
+        new BanChuyenMonUi().run(in);
     }
 }
