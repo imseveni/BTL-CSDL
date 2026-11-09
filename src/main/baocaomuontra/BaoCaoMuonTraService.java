@@ -89,8 +89,41 @@ public class BaoCaoMuonTraService {
         ThongKeMuonTra thongKe = ThongKeMuonTra.tuDanhSach(danhSachLoc);
         BoLocBaoCaoMuonTra boLocChuan = new BoLocBaoCaoMuonTra(
                 tuNgay, denNgay, loaiThoiGian, tuKhoa, trangThaiLoc, sapXepTheo);
+        NguoiLapBaoCao nguoiLap = chonNguoiLapMacDinh(duLieuGoc);
 
-        return new KetQuaBaoCaoMuonTra(boLocChuan, ngayMoc, thongKe, List.copyOf(danhSachLoc));
+        return new KetQuaBaoCaoMuonTra(boLocChuan, ngayMoc, thongKe, List.copyOf(danhSachLoc), nguoiLap);
+    }
+
+    /**
+     * Lấy danh sách thành viên trong CLB để chọn làm người lập báo cáo.
+     */
+    public List<NguoiLapBaoCao> danhSachThanhVienClb() {
+        List<NguoiLapBaoCao> ds = dao.danhSachThanhVienClb();
+        return ds == null || ds.isEmpty() ? List.of(NguoiLapBaoCao.MAC_DINH) : ds;
+    }
+
+    private NguoiLapBaoCao chonNguoiLapMacDinh(List<BaoCaoMuonTraItem> duLieuGoc) {
+        List<NguoiLapBaoCao> ds = dao.danhSachThanhVienClb();
+        if (ds != null && !ds.isEmpty()) {
+            // Ưu tiên chọn thành viên thuộc Ban Hậu cần / Cơ sở vật chất hoặc thành viên đầu tiên trong CLB
+            for (NguoiLapBaoCao tv : ds) {
+                if (tv.tenBan() != null && tv.tenBan().toLowerCase(Locale.ROOT).contains("hậu cần")) {
+                    return tv;
+                }
+            }
+            return ds.get(0);
+        }
+        if (duLieuGoc != null && !duLieuGoc.isEmpty()) {
+            BaoCaoMuonTraItem first = duLieuGoc.get(0);
+            if (first.tenNguoiMuon() != null && !first.tenNguoiMuon().isBlank()) {
+                return new NguoiLapBaoCao(
+                        first.msvNguoiMuon(),
+                        first.tenNguoiMuon(),
+                        "Thành viên",
+                        "Ban Cơ sở vật chất – Hậu cần");
+            }
+        }
+        return NguoiLapBaoCao.MAC_DINH;
     }
 
     private static boolean thuocKhoangThoiGian(
@@ -136,28 +169,29 @@ public class BaoCaoMuonTraService {
     }
 
     private static Comparator<BaoCaoMuonTraItem> boSoSanh(SapXepTheo sapXepTheo) {
-        Comparator<String> maPhieu = Comparator.nullsLast(String::compareTo);
-        Comparator<String> maThietBi = Comparator.nullsLast(String::compareTo);
+        Comparator<String> maPhieuTang = Comparator.nullsLast(Comparator.naturalOrder());
+        Comparator<String> maPhieuGiam = Comparator.nullsLast(Comparator.reverseOrder());
+        Comparator<String> maThietBiTang = Comparator.nullsLast(Comparator.naturalOrder());
 
         return switch (sapXepTheo) {
             case NGAY_MUON_TANG -> Comparator
                     .comparing(BaoCaoMuonTraItem::ngayMuon, Comparator.nullsLast(Comparator.naturalOrder()))
-                    .thenComparing(BaoCaoMuonTraItem::maPhieuMuon, maPhieu)
-                    .thenComparing(BaoCaoMuonTraItem::maThietBi, maThietBi);
+                    .thenComparing(BaoCaoMuonTraItem::maPhieuMuon, maPhieuTang)
+                    .thenComparing(BaoCaoMuonTraItem::maThietBi, maThietBiTang);
             case NGAY_MUON_GIAM -> Comparator
                     .comparing(BaoCaoMuonTraItem::ngayMuon, Comparator.nullsLast(Comparator.reverseOrder()))
-                    .thenComparing(BaoCaoMuonTraItem::maPhieuMuon, maPhieu)
-                    .thenComparing(BaoCaoMuonTraItem::maThietBi, maThietBi);
+                    .thenComparing(BaoCaoMuonTraItem::maPhieuMuon, maPhieuGiam)
+                    .thenComparing(BaoCaoMuonTraItem::maThietBi, maThietBiTang);
             case NGAY_TRA_TANG -> Comparator
                     .comparing(BaoCaoMuonTraItem::ngayTraThucTe, Comparator.nullsLast(Comparator.naturalOrder()))
                     .thenComparing(BaoCaoMuonTraItem::ngayMuon, Comparator.nullsLast(Comparator.naturalOrder()))
-                    .thenComparing(BaoCaoMuonTraItem::maPhieuMuon, maPhieu)
-                    .thenComparing(BaoCaoMuonTraItem::maThietBi, maThietBi);
+                    .thenComparing(BaoCaoMuonTraItem::maPhieuMuon, maPhieuTang)
+                    .thenComparing(BaoCaoMuonTraItem::maThietBi, maThietBiTang);
             case NGAY_TRA_GIAM -> Comparator
-                    .comparing(BaoCaoMuonTraItem::ngayTraThucTe, Comparator.nullsLast(Comparator.reverseOrder()))
+                    .comparing(BaoCaoMuonTraItem::ngayTraThucTe, Comparator.nullsFirst(Comparator.reverseOrder()))
                     .thenComparing(BaoCaoMuonTraItem::ngayMuon, Comparator.nullsLast(Comparator.reverseOrder()))
-                    .thenComparing(BaoCaoMuonTraItem::maPhieuMuon, maPhieu)
-                    .thenComparing(BaoCaoMuonTraItem::maThietBi, maThietBi);
+                    .thenComparing(BaoCaoMuonTraItem::maPhieuMuon, maPhieuGiam)
+                    .thenComparing(BaoCaoMuonTraItem::maThietBi, maThietBiTang);
         };
     }
 }

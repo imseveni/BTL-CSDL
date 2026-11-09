@@ -13,6 +13,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -50,6 +52,8 @@ public class BaoCaoMuonTraSwingUi extends JPanel implements Refreshable {
     private final JTextField tuKhoaField = new JTextField(16);
     private final JComboBox<TrangThaiLoc> trangThaiCombo = new JComboBox<>(TrangThaiLoc.values());
     private final JComboBox<SapXepTheo> sapXepCombo = new JComboBox<>(SapXepTheo.values());
+    private final JComboBox<NguoiLapBaoCao> nguoiLapCombo = new JComboBox<>(
+            new NguoiLapBaoCao[]{NguoiLapBaoCao.MAC_DINH});
 
     private final JLabel lblTongLuotMuon = new JLabel("0");
     private final JLabel lblTongLuotTra = new JLabel("0");
@@ -132,6 +136,13 @@ public class BaoCaoMuonTraSwingUi extends JPanel implements Refreshable {
         denNgayField.setToolTipText("Định dạng yyyy-MM-dd hoặc dd/MM/yyyy (ví dụ: 2025-12-31)");
         tuKhoaField.setToolTipText("Tìm theo mã phiếu, mã/tên cơ sở vật chất, MSV hoặc họ tên người mượn");
 
+        loaiThoiGianCombo.setPreferredSize(new Dimension(155, 28));
+        trangThaiCombo.setPreferredSize(new Dimension(155, 28));
+        sapXepCombo.setPreferredSize(new Dimension(180, 28));
+        nguoiLapCombo.setName("baocaomuontra.nguoiLap");
+        nguoiLapCombo.setPreferredSize(new Dimension(240, 28));
+        nguoiLapCombo.setToolTipText("Chọn thành viên trong CLB lập báo cáo");
+
         tuKhoaField.addActionListener(e -> xemBaoCao());
         tuNgayField.addActionListener(e -> xemBaoCao());
         denNgayField.addActionListener(e -> xemBaoCao());
@@ -161,10 +172,8 @@ public class BaoCaoMuonTraSwingUi extends JPanel implements Refreshable {
             YearMonth ym = YearMonth.now();
             chonNhanhKhoangNgay(ym.atDay(1), ym.atEndOfMonth());
         }));
-        row1.add(SwingSupport.button("Năm 2025", "baocaomuontra.nam2025", () -> chonNhanhKhoangNgay(
-                LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31))));
 
-        // Dòng 2: Tìm kiếm + Lọc trạng thái + Sắp xếp + Làm mới
+        // Dòng 2: Tìm kiếm + Lọc trạng thái + Sắp xếp + Người lập báo cáo + Làm mới
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
         row2.setOpaque(false);
         row2.add(new JLabel("Tìm kiếm:"));
@@ -173,6 +182,8 @@ public class BaoCaoMuonTraSwingUi extends JPanel implements Refreshable {
         row2.add(trangThaiCombo);
         row2.add(new JLabel("Sắp xếp:"));
         row2.add(sapXepCombo);
+        row2.add(new JLabel("Người lập:"));
+        row2.add(nguoiLapCombo);
         row2.add(SwingSupport.button("Lọc / Sắp xếp", "baocaomuontra.loc", this::xemBaoCao));
         row2.add(SwingSupport.button("Đặt lại", "baocaomuontra.datLai", this::resetAndReload));
 
@@ -236,6 +247,33 @@ public class BaoCaoMuonTraSwingUi extends JPanel implements Refreshable {
     }
 
     private void cauHinhBang() {
+        // Tắt RowSorter mặc định của JTable để không ghi đè thứ tự sắp xếp của ô "Sắp xếp"
+        // và không làm đảo lộn cột STT hoặc sắp xếp sai chuỗi "Chưa trả".
+        table.setAutoCreateRowSorter(false);
+        table.setRowSorter(null);
+
+        table.getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int col = table.columnAtPoint(e.getPoint());
+                if (col == 5) { // Cột Ngày mượn
+                    SapXepTheo hienTai = (SapXepTheo) sapXepCombo.getSelectedItem();
+                    sapXepCombo.setSelectedItem(
+                            hienTai == SapXepTheo.NGAY_MUON_TANG
+                                    ? SapXepTheo.NGAY_MUON_GIAM
+                                    : SapXepTheo.NGAY_MUON_TANG);
+                    xemBaoCao();
+                } else if (col == 7) { // Cột Ngày trả thực tế
+                    SapXepTheo hienTai = (SapXepTheo) sapXepCombo.getSelectedItem();
+                    sapXepCombo.setSelectedItem(
+                            hienTai == SapXepTheo.NGAY_TRA_TANG
+                                    ? SapXepTheo.NGAY_TRA_GIAM
+                                    : SapXepTheo.NGAY_TRA_TANG);
+                    xemBaoCao();
+                }
+            }
+        });
+
         int[] widths = {55, 110, 220, 210, 110, 105, 120, 120, 160};
         for (int i = 0; i < widths.length; i++) {
             table.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
@@ -330,8 +368,36 @@ public class BaoCaoMuonTraSwingUi extends JPanel implements Refreshable {
 
         tasks.run(
                 "Đang tổng hợp báo cáo mượn – trả cơ sở vật chất...",
-                () -> service.lapBaoCao(boLoc),
-                this::hienThiKetQua);
+                () -> new DuLieuTaiVe(service.lapBaoCao(boLoc), service.danhSachThanhVienClb()),
+                taiVe -> {
+                    capNhatDanhSachNguoiLap(taiVe.thanhVienClb());
+                    NguoiLapBaoCao chon = (NguoiLapBaoCao) nguoiLapCombo.getSelectedItem();
+                    hienThiKetQua(taiVe.baoCao().voiNguoiLap(chon));
+                });
+    }
+
+    private record DuLieuTaiVe(KetQuaBaoCaoMuonTra baoCao, List<NguoiLapBaoCao> thanhVienClb) {
+    }
+
+    private void capNhatDanhSachNguoiLap(List<NguoiLapBaoCao> danhSachMoi) {
+        if (danhSachMoi == null || danhSachMoi.isEmpty()) {
+            return;
+        }
+        NguoiLapBaoCao dangChon = (NguoiLapBaoCao) nguoiLapCombo.getSelectedItem();
+        String msvDangChon = dangChon == null ? null : dangChon.msv();
+
+        nguoiLapCombo.removeAllItems();
+        int idxChon = 0;
+        for (int i = 0; i < danhSachMoi.size(); i++) {
+            NguoiLapBaoCao tv = danhSachMoi.get(i);
+            nguoiLapCombo.addItem(tv);
+            if (msvDangChon != null && msvDangChon.equals(tv.msv()) && !"TV_CLB".equals(msvDangChon)) {
+                idxChon = i;
+            }
+        }
+        if (nguoiLapCombo.getItemCount() > 0) {
+            nguoiLapCombo.setSelectedIndex(idxChon);
+        }
     }
 
     private void hienThiKetQua(KetQuaBaoCaoMuonTra ketQua) {
@@ -412,10 +478,14 @@ public class BaoCaoMuonTraSwingUi extends JPanel implements Refreshable {
      * Xuất báo cáo ra đường dẫn chỉ định (phục vụ cả hộp thoại lưu file và kiểm thử tự động).
      */
     public void xuatPdfDenDuongDan(BoLocBaoCaoMuonTra boLoc, Path duongDan, boolean hienThongBao) {
+        NguoiLapBaoCao nguoiLapChon = (NguoiLapBaoCao) nguoiLapCombo.getSelectedItem();
         tasks.run(
                 "Đang tạo và xuất file PDF báo cáo...",
                 () -> {
                     KetQuaBaoCaoMuonTra baoCao = service.lapBaoCao(boLoc);
+                    if (nguoiLapChon != null && !"TV_CLB".equals(nguoiLapChon.msv())) {
+                        baoCao = baoCao.voiNguoiLap(nguoiLapChon);
+                    }
                     Path saved = pdfExporter.xuatFile(baoCao, duongDan);
                     return new KetQuaXuatPdf(baoCao, saved);
                 },

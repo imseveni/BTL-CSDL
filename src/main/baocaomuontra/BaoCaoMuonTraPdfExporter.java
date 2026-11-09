@@ -46,11 +46,11 @@ public class BaoCaoMuonTraPdfExporter {
     private static final int PDF_PAGE_HEIGHT_PT = 842;
     private static final int PAGE_WIDTH_PX = 1240;
     private static final int PAGE_HEIGHT_PX = 1754;
-    private static final int MARGIN_X = 64;
+    private static final int MARGIN_X = 50;
 
     // Số dòng tối đa trên trang đầu và các trang tiếp theo
-    private static final int MAX_ROWS_FIRST_PAGE_WITH_SUMMARY = 12;
-    private static final int MAX_ROWS_FIRST_PAGE_ONLY_TABLE = 17;
+    private static final int MAX_ROWS_FIRST_PAGE_WITH_SUMMARY = 10;
+    private static final int MAX_ROWS_FIRST_PAGE_ONLY_TABLE = 15;
     private static final int MAX_ROWS_NEXT_PAGE_WITH_SUMMARY = 20;
     private static final int MAX_ROWS_NEXT_PAGE_ONLY_TABLE = 25;
 
@@ -241,52 +241,89 @@ public class BaoCaoMuonTraPdfExporter {
         int contentWidth = PAGE_WIDTH_PX - 2 * MARGIN_X;
         int y = startY;
 
-        // Thanh trang trí trên cùng
-        g.setColor(MAU_CHU_DAO);
-        g.fillRoundRect(MARGIN_X, y, contentWidth, 8, 4, 4);
+        // Phần đầu trang theo bố cục hành chính chuẩn (Trái: Tên đơn vị CLB | Phải: Quốc hiệu & Tiêu ngữ)
+        int leftColW = (int) (contentWidth * 0.44);
+        int rightColX = MARGIN_X + (int) (contentWidth * 0.46);
+        int rightColW = contentWidth - (int) (contentWidth * 0.46);
+
+        g.setFont(font(Font.BOLD, 16));
+        g.setColor(MAU_CHU_CHINH);
+        veCanGiua(g, "CÂU LẠC BỘ SINH VIÊN", MARGIN_X, leftColW, y);
+        veCanGiua(g, "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM", rightColX, rightColW, y);
+        y += 24;
+
+        g.setFont(font(Font.PLAIN, 14));
+        veCanGiua(g, "CƠ SỞ VẬT CHẤT – HẬU CẦN", MARGIN_X, leftColW, y);
+        g.setFont(font(Font.BOLD, 15));
+        veCanGiua(g, "Độc lập - Tự do - Hạnh phúc", rightColX, rightColW, y);
+        y += 10;
+
+        // Gạch chân dưới tên đơn vị và tiêu ngữ
+        g.setColor(MAU_CHU_CHINH);
+        g.setStroke(new BasicStroke(1.2f));
+        int leftLineW = 160;
+        g.drawLine(
+                MARGIN_X + (leftColW - leftLineW) / 2,
+                y,
+                MARGIN_X + (leftColW + leftLineW) / 2,
+                y);
+        int rightLineW = 200;
+        g.drawLine(
+                rightColX + (rightColW - rightLineW) / 2,
+                y,
+                rightColX + (rightColW + rightLineW) / 2,
+                y);
         y += 28;
 
-        // Tên đơn vị & Quốc hiệu
-        g.setFont(font(Font.BOLD, 16));
-        g.setColor(MAU_CHU_PHU);
-        g.drawString("HỆ THỐNG QUẢN LÝ CÂU LẠC BỘ SINH VIÊN", MARGIN_X, y);
-        String ngayLapText = "Ngày lập báo cáo: " + dinhDangNgay(baoCao.ngayLapBaoCao());
-        veCanPhai(g, ngayLapText, MARGIN_X + contentWidth, y);
+        // Ngày tháng năm lập báo cáo (in nghiêng, căn phải dưới Quốc hiệu)
+        LocalDate ngayLap = baoCao.ngayLapBaoCao() == null ? LocalDate.now() : baoCao.ngayLapBaoCao();
+        String dongNgayThang = String.format(
+                "Hà Nội, ngày %02d tháng %02d năm %04d",
+                ngayLap.getDayOfMonth(),
+                ngayLap.getMonthValue(),
+                ngayLap.getYear());
+        g.setFont(font(Font.ITALIC, 15));
+        g.setColor(MAU_CHU_CHINH);
+        veCanGiua(g, dongNgayThang, rightColX, rightColW, y);
         y += 42;
 
         // 1. Tiêu đề chính: BÁO CÁO MƯỢN – TRẢ CƠ SỞ VẬT CHẤT
-        g.setFont(font(Font.BOLD, 30));
+        g.setFont(font(Font.BOLD, 28));
         g.setColor(MAU_CHU_DAO);
         veCanGiua(g, "BÁO CÁO MƯỢN – TRẢ CƠ SỞ VẬT CHẤT", MARGIN_X, contentWidth, y);
-        y += 32;
+        y += 36;
 
-        // 2. Khoảng thời gian thống kê & tiêu chí lọc
+        // 2. Khối thông tin Người lập báo cáo (TV trong CLB), Chức vụ, Bộ phận, Người nhận (Ban Chủ nhiệm) & Thời gian
+        NguoiLapBaoCao nguoiLap = baoCao.nguoiLapBaoCao() == null
+                ? NguoiLapBaoCao.MAC_DINH
+                : baoCao.nguoiLapBaoCao();
         BoLocBaoCaoMuonTra loc = baoCao.boLoc();
-        String khoangThoiGian = String.format(
-                "Khoảng thời gian thống kê (%s): Từ ngày %s đến ngày %s",
-                loc.loaiThoiGian().nhan(),
-                dinhDangNgay(loc.tuNgay()),
-                dinhDangNgay(loc.denNgay()));
-        g.setFont(font(Font.BOLD, 17));
-        g.setColor(MAU_CHU_CHINH);
-        veCanGiua(g, khoangThoiGian, MARGIN_X, contentWidth, y);
-        y += 24;
+        int infoX = MARGIN_X + 70;
+        int lineGap = 25;
 
-        String thongTinBoLoc = String.format(
-                "Trạng thái lọc: %s   |   Sắp xếp: %s   |   Từ khóa: %s",
-                loc.trangThaiLoc().nhan(),
-                loc.sapXepTheo().nhan(),
-                loc.tuKhoa() == null || loc.tuKhoa().isBlank() ? "Tất cả" : "\"" + loc.tuKhoa() + "\"");
-        g.setFont(font(Font.PLAIN, 14));
-        g.setColor(MAU_CHU_PHU);
-        veCanGiua(g, thongTinBoLoc, MARGIN_X, contentWidth, y);
-        y += 24;
+        veDongThongTinDauBaoCao(g, "Họ và tên người lập:", nguoiLap.hoTenHienThi(), infoX, y);
+        y += lineGap;
+        veDongThongTinDauBaoCao(g, "Mã sinh viên:", nguoiLap.msvHienThi(), infoX, y);
+        y += lineGap;
+        veDongThongTinDauBaoCao(g, "Chức vụ:", nguoiLap.chucVuHienThi(), infoX, y);
+        y += lineGap;
+        veDongThongTinDauBaoCao(g, "Bộ phận công tác:", nguoiLap.boPhanHienThi(), infoX, y);
+        y += lineGap;
+        veDongThongTinDauBaoCao(g, "Người nhận báo cáo:", "Ban Chủ nhiệm Câu lạc bộ", infoX, y);
+        y += lineGap;
+        String khoangThoiGian = String.format(
+                "Từ ngày %s đến ngày %s (%s)",
+                dinhDangNgay(loc.tuNgay()),
+                dinhDangNgay(loc.denNgay()),
+                loc.loaiThoiGian().nhan());
+        veDongThongTinDauBaoCao(g, "Thời gian thực hiện:", khoangThoiGian, infoX, y);
+        y += 28;
 
         // 4. Các số liệu tổng quan (6 thẻ chỉ số chia làm 2 hàng x 3 cột)
-        g.setFont(font(Font.BOLD, 18));
+        g.setFont(font(Font.BOLD, 17));
         g.setColor(MAU_CHU_DAO);
         g.drawString("I. SỐ LIỆU THỐNG KÊ TỔNG QUAN", MARGIN_X, y);
-        y += 14;
+        y += 12;
 
         ThongKeMuonTra tk = baoCao.thongKe();
         String[][] theChiSo = {
@@ -307,9 +344,9 @@ public class BaoCaoMuonTraPdfExporter {
         };
 
         int gapX = 18;
-        int gapY = 14;
+        int gapY = 12;
         int cardW = (contentWidth - 2 * gapX) / 3;
-        int cardH = 82;
+        int cardH = 74;
 
         for (int i = 0; i < theChiSo.length; i++) {
             int row = i / 3;
@@ -328,22 +365,31 @@ public class BaoCaoMuonTraPdfExporter {
 
             g.setFont(font(Font.BOLD, 14));
             g.setColor(MAU_CHU_PHU);
-            g.drawString(theChiSo[i][0], cx + 18, cy + 24);
+            g.drawString(theChiSo[i][0], cx + 18, cy + 22);
 
-            g.setFont(font(Font.BOLD, 22));
+            g.setFont(font(Font.BOLD, 21));
             g.setColor(mauVienThe[i]);
-            g.drawString(theChiSo[i][1], cx + 18, cy + 52);
+            g.drawString(theChiSo[i][1], cx + 18, cy + 48);
 
             g.setFont(font(Font.PLAIN, 12));
             g.setColor(MAU_CHU_PHU);
-            g.drawString(theChiSo[i][2], cx + 18, cy + 71);
+            g.drawString(theChiSo[i][2], cx + 18, cy + 66);
         }
 
-        y += 2 * cardH + gapY + 28;
-        g.setFont(font(Font.BOLD, 18));
+        y += 2 * cardH + gapY + 24;
+        g.setFont(font(Font.BOLD, 17));
         g.setColor(MAU_CHU_DAO);
         g.drawString("II. BẢNG CHI TIẾT CÁC GIAO DỊCH MƯỢN – TRẢ", MARGIN_X, y);
-        return y + 14;
+        return y + 12;
+    }
+
+    private void veDongThongTinDauBaoCao(Graphics2D g, String nhan, String giaTri, int x, int y) {
+        g.setFont(font(Font.BOLD, 15));
+        g.setColor(MAU_CHU_CHINH);
+        g.drawString(nhan, x, y);
+        int labelW = g.getFontMetrics().stringWidth(nhan);
+        g.setFont(font(Font.PLAIN, 15));
+        g.drawString(giaTri == null ? "" : giaTri, x + labelW + 10, y);
     }
 
     private int veTieuDeTrangTiepTheo(
@@ -382,22 +428,22 @@ public class BaoCaoMuonTraPdfExporter {
             int sttBatDau,
             int startY) {
         int contentWidth = PAGE_WIDTH_PX - 2 * MARGIN_X;
-        // 9 cột: STT, Mã phiếu, Tên CSVC, Người mượn, SL, Ngày mượn, Ngày dự kiến trả, Ngày trả thực tế, Trạng thái
-        int[] doRongCot = {52, 108, 224, 212, 66, 108, 118, 118, 106};
+        // 9 cột: STT, Mã phiếu, Tên CSVC, Người mượn, Số lượng, Ngày mượn, Dự kiến trả, Ngày trả thực tế, Trạng thái (tổng = 1140)
+        int[] doRongCot = {46, 88, 236, 206, 86, 106, 108, 144, 120};
         String[] tieuDeCot = {
                 "STT",
                 "Mã phiếu",
                 "Tên cơ sở vật chất",
                 "Người mượn",
-                "SL mượn",
+                "Số lượng",
                 "Ngày mượn",
                 "Dự kiến trả",
-                "Ngày trả TT",
+                "Ngày trả thực tế",
                 "Trạng thái"
         };
 
         int headerH = 44;
-        int rowH = 40;
+        int minRowH = 50;
         int y = startY;
 
         // Vẽ nền header bảng
@@ -444,6 +490,22 @@ public class BaoCaoMuonTraPdfExporter {
             BaoCaoMuonTraItem item = cacDong.get(i);
             int stt = sttBatDau + i;
 
+            g.setFont(font(Font.PLAIN, 13));
+            FontMetrics fm = g.getFontMetrics();
+            List<String> dongTenCsvt = tachTenVaMa(
+                    item.tenThietBi(),
+                    item.maThietBi(),
+                    fm,
+                    doRongCot[2] - 14);
+            List<String> dongNguoiMuon = tachTenVaMa(
+                    item.tenNguoiMuon(),
+                    item.msvNguoiMuon(),
+                    fm,
+                    doRongCot[3] - 14);
+
+            int soDongToiDa = Math.max(dongTenCsvt.size(), dongNguoiMuon.size());
+            int rowH = Math.max(minRowH, 14 + soDongToiDa * 18);
+
             // Nền dòng chẵn / lẻ
             g.setColor(i % 2 == 1 ? MAU_DONG_CHAN : Color.WHITE);
             g.fillRect(MARGIN_X, y, contentWidth, rowH);
@@ -451,8 +513,8 @@ public class BaoCaoMuonTraPdfExporter {
             String[] giaTri = {
                     String.valueOf(stt),
                     item.maPhieuMuon(),
-                    item.tenCoSoVatChatHienThi(),
-                    item.nguoiMuonHienThi(),
+                    "",
+                    "",
                     String.valueOf(item.soLuongMuon()),
                     dinhDangNgay(item.ngayMuon()),
                     dinhDangNgay(item.ngayHenTra()),
@@ -464,6 +526,10 @@ public class BaoCaoMuonTraPdfExporter {
             for (int c = 0; c < giaTri.length; c++) {
                 if (c == 8) {
                     veBadgeTrangThai(g, item, cx, y, doRongCot[c], rowH);
+                } else if (c == 2) {
+                    veTenKemMaPhiaDuoi(g, dongTenCsvt, cx, y, doRongCot[c], rowH);
+                } else if (c == 3) {
+                    veTenKemMaPhiaDuoi(g, dongNguoiMuon, cx, y, doRongCot[c], rowH);
                 } else {
                     g.setFont(font(c == 1 ? Font.BOLD : Font.PLAIN, 13));
                     g.setColor(c == 7 && item.ngayTraThucTe() == null ? MAU_QUA_HAN_CHU : MAU_CHU_CHINH);
@@ -509,9 +575,10 @@ public class BaoCaoMuonTraPdfExporter {
         }
 
         int padX = 6;
-        int padY = 7;
+        int badgeH = 28;
+        int badgeY = y + (h - badgeH) / 2;
         g.setColor(nen);
-        g.fillRoundRect(x + padX, y + padY, w - 2 * padX, h - 2 * padY, 8, 8);
+        g.fillRoundRect(x + padX, badgeY, w - 2 * padX, badgeH, 8, 8);
         g.setFont(font(Font.BOLD, 12));
         g.setColor(chu);
         veChuTrongO(g, item.trangThai(), x, y, w, h, true);
@@ -550,19 +617,30 @@ public class BaoCaoMuonTraPdfExporter {
         g.drawString(dong1, MARGIN_X + 18, y + 54);
         g.drawString(dong2, MARGIN_X + 18, y + 80);
 
-        // Chữ ký
-        int sigY = y + boxH + 34;
-        if (sigY + 90 < PAGE_HEIGHT_PX - 65) {
+        // Chữ ký cuối báo cáo theo bố cục hình mẫu:
+        // Bên trái: Người nhận báo cáo (BAN CHỦ NHIỆM CÂU LẠC BỘ) | Bên phải: NGƯỜI LẬP BÁO CÁO (Thành viên CLB)
+        int sigY = y + boxH + 32;
+        if (sigY + 95 < PAGE_HEIGHT_PX - 60) {
             int colW = contentWidth / 2;
+            NguoiLapBaoCao nguoiLap = baoCao.nguoiLapBaoCao() == null
+                    ? NguoiLapBaoCao.MAC_DINH
+                    : baoCao.nguoiLapBaoCao();
+
             g.setFont(font(Font.BOLD, 15));
             g.setColor(MAU_CHU_CHINH);
-            veCanGiua(g, "NGƯỜI LẬP BÁO CÁO", MARGIN_X, colW, sigY);
-            veCanGiua(g, "XÁC NHẬN CỦA BAN CHỦ NHIỆM", MARGIN_X + colW, colW, sigY);
+            veCanGiua(g, "BAN CHỦ NHIỆM CÂU LẠC BỘ", MARGIN_X, colW, sigY);
+            veCanGiua(g, "NGƯỜI LẬP BÁO CÁO", MARGIN_X + colW, colW, sigY);
 
             g.setFont(font(Font.ITALIC, 13));
             g.setColor(MAU_CHU_PHU);
-            veCanGiua(g, "(Ký và ghi rõ họ tên)", MARGIN_X, colW, sigY + 22);
-            veCanGiua(g, "(Ký tên và đóng dấu)", MARGIN_X + colW, colW, sigY + 22);
+            veCanGiua(g, "(Người nhận báo cáo - Ký và xác nhận)", MARGIN_X, colW, sigY + 22);
+            veCanGiua(g, "(Ký và ghi rõ họ tên)", MARGIN_X + colW, colW, sigY + 22);
+
+            if (sigY + 95 < PAGE_HEIGHT_PX - 55 && nguoiLap.hoVaTen() != null && !nguoiLap.hoVaTen().isBlank()) {
+                g.setFont(font(Font.BOLD, 14));
+                g.setColor(MAU_CHU_CHINH);
+                veCanGiua(g, nguoiLap.hoVaTen(), MARGIN_X + colW, colW, sigY + 90);
+            }
         }
     }
 
@@ -602,6 +680,88 @@ public class BaoCaoMuonTraPdfExporter {
         } else {
             g.drawString(rutGon, x + 8, textY);
         }
+    }
+
+    /**
+     * Vẽ ô gồm tên ở trên và mã (mã thiết bị hoặc mã sinh viên) căn chính giữa ở phía dưới.
+     */
+    private void veTenKemMaPhiaDuoi(
+            Graphics2D g,
+            List<String> cacDong,
+            int x,
+            int y,
+            int width,
+            int height) {
+        if (cacDong == null || cacDong.isEmpty()) {
+            return;
+        }
+        g.setFont(font(Font.PLAIN, 13));
+        FontMetrics fm = g.getFontMetrics();
+        int lineHeight = fm.getHeight();
+        int totalH = cacDong.size() * lineHeight;
+        int startY = y + (height - totalH) / 2 + fm.getAscent();
+
+        for (int i = 0; i < cacDong.size(); i++) {
+            String dong = cacDong.get(i);
+            boolean laDongMaCuoi = (cacDong.size() > 1 && i == cacDong.size() - 1 && dong.startsWith("(") && dong.endsWith(")"));
+            if (laDongMaCuoi) {
+                g.setFont(font(Font.PLAIN, 12));
+                g.setColor(MAU_CHU_PHU);
+            } else {
+                g.setFont(font(Font.PLAIN, 13));
+                g.setColor(MAU_CHU_CHINH);
+            }
+            FontMetrics curFm = g.getFontMetrics();
+            int textW = curFm.stringWidth(dong);
+            int drawX = x + Math.max(4, (width - textW) / 2);
+            g.drawString(dong, drawX, startY + i * lineHeight);
+        }
+    }
+
+    private static List<String> tachTenVaMa(String ten, String ma, FontMetrics fm, int maxWidth) {
+        String safeTen = ten == null ? "" : ten.trim();
+        String safeMa = ma == null ? "" : ma.trim();
+        List<String> ketQua = new ArrayList<>();
+        if (!safeTen.isEmpty()) {
+            ketQua.addAll(tachDongVuaO(safeTen, fm, maxWidth));
+        }
+        if (!safeMa.isEmpty()) {
+            ketQua.add("(" + safeMa + ")");
+        }
+        if (ketQua.isEmpty()) {
+            ketQua.add("");
+        }
+        return ketQua;
+    }
+
+    private static List<String> tachDongVuaO(String text, FontMetrics fm, int maxWidth) {
+        String safe = text == null ? "" : text.trim();
+        if (safe.isEmpty() || fm.stringWidth(safe) <= maxWidth) {
+            return List.of(safe);
+        }
+
+        List<String> ketQua = new ArrayList<>();
+        String[] tu = safe.split("\\s+");
+        StringBuilder dongHienTai = new StringBuilder();
+
+        for (String w : tu) {
+            if (dongHienTai.length() == 0) {
+                dongHienTai.append(w);
+            } else {
+                String thuGhep = dongHienTai + " " + w;
+                if (fm.stringWidth(thuGhep) <= maxWidth) {
+                    dongHienTai.append(" ").append(w);
+                } else {
+                    ketQua.add(dongHienTai.toString());
+                    dongHienTai.setLength(0);
+                    dongHienTai.append(w);
+                }
+            }
+        }
+        if (dongHienTai.length() > 0) {
+            ketQua.add(dongHienTai.toString());
+        }
+        return ketQua;
     }
 
     private static String catChuoiVuaO(String text, FontMetrics fm, int maxWidth) {
@@ -672,7 +832,14 @@ public class BaoCaoMuonTraPdfExporter {
         StringBuilder sb = new StringBuilder();
         BoLocBaoCaoMuonTra loc = baoCao.boLoc();
         ThongKeMuonTra tk = baoCao.thongKe();
+        NguoiLapBaoCao nguoiLap = baoCao.nguoiLapBaoCao() == null
+                ? NguoiLapBaoCao.MAC_DINH
+                : baoCao.nguoiLapBaoCao();
         sb.append("BÁO CÁO MƯỢN – TRẢ CƠ SỞ VẬT CHẤT\n");
+        sb.append("Người lập báo cáo: ").append(nguoiLap.hoTenKemMsv())
+                .append(" | Chức vụ: ").append(nguoiLap.chucVuHienThi())
+                .append(" | Bộ phận: ").append(nguoiLap.boPhanHienThi()).append("\n");
+        sb.append("Người nhận báo cáo: Ban Chủ nhiệm Câu lạc bộ\n");
         sb.append("Khoảng thời gian thống kê: ")
                 .append(dinhDangNgay(loc.tuNgay()))
                 .append(" - ")

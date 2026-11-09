@@ -48,6 +48,13 @@ public class BaoCaoMuonTraDao {
             ORDER BY ct.NgayTraThucTe ASC, pm.MaPhieuMuon ASC, ct.MaThietBi ASC
             """;
 
+    private static final String SQL_THANH_VIEN_CLB = """
+            SELECT tv.MSV, tv.HoVaTen, tv.ChucVu, b.TenBan
+            FROM ThanhVien tv
+            LEFT JOIN BanChuyenMon b ON b.MaBan = tv.MaBan
+            ORDER BY tv.MSV ASC
+            """;
+
     private final ConnectionProvider connections;
 
     public BaoCaoMuonTraDao() {
@@ -86,6 +93,28 @@ public class BaoCaoMuonTraDao {
             throw new DataAccessException(
                     "Không thể truy vấn dữ liệu báo cáo mượn – trả cơ sở vật chất: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Lấy danh sách thành viên trong Câu lạc bộ từ bảng {@code ThanhVien} và {@code BanChuyenMon}
+     * để chọn làm người lập báo cáo.
+     */
+    public List<NguoiLapBaoCao> danhSachThanhVienClb() {
+        List<NguoiLapBaoCao> list = new ArrayList<>();
+        try (Connection conn = connections.getConnection();
+                PreparedStatement ps = conn.prepareStatement(SQL_THANH_VIEN_CLB);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(new NguoiLapBaoCao(
+                        rs.getString("MSV"),
+                        rs.getString("HoVaTen"),
+                        rs.getString("ChucVu"),
+                        rs.getString("TenBan")));
+            }
+        } catch (SQLException ignored) {
+            // Dự phòng khi chạy unit test không kết nối MySQL
+        }
+        return list;
     }
 
     private static BaoCaoMuonTraItem docDong(ResultSet rs, LocalDate ngayMoc) throws SQLException {

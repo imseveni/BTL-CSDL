@@ -317,6 +317,7 @@ class BaoCaoMuonTraTest {
         JTextField denNgay = (JTextField) find(ui, "baocaomuontra.denNgay");
         JTextField tuKhoa = (JTextField) find(ui, "baocaomuontra.tuKhoa");
         JComboBox<?> trangThai = (JComboBox<?>) find(ui, "baocaomuontra.trangThai");
+        JComboBox<?> sapXep = (JComboBox<?>) find(ui, "baocaomuontra.sapXep");
 
         SwingUtilities.invokeAndWait(() -> {
             tuNgay.setText("2025-09-01");
@@ -326,6 +327,33 @@ class BaoCaoMuonTraTest {
         waitFor(() -> table.getRowCount() == 6 && !ui.isBusy());
         assertEquals("6", lblTongMuon.getText());
         assertEquals("3", lblQuaHan.getText());
+
+        // Kiểm tra sắp xếp Ngày trả (Giảm dần): Chưa trả đứng trên cùng, tiếp theo là ngày trả muộn nhất -> sớm nhất
+        SwingUtilities.invokeAndWait(() -> {
+            sapXep.setSelectedItem(SapXepTheo.NGAY_TRA_GIAM);
+            ((JButton) find(ui, "baocaomuontra.loc")).doClick();
+        });
+        waitFor(() -> "Chưa trả".equals(table.getValueAt(0, 7)) && !ui.isBusy());
+        assertEquals("Chưa trả", table.getValueAt(0, 7));
+        assertEquals("Chưa trả", table.getValueAt(1, 7));
+        assertEquals("Chưa trả", table.getValueAt(2, 7));
+        assertEquals("2025-10-14", table.getValueAt(3, 7));
+        assertEquals("2025-09-05", table.getValueAt(4, 7));
+        assertEquals("2025-09-05", table.getValueAt(5, 7));
+
+        // Kiểm tra sắp xếp Ngày mượn (Giảm dần)
+        SwingUtilities.invokeAndWait(() -> {
+            sapXep.setSelectedItem(SapXepTheo.NGAY_MUON_GIAM);
+            ((JButton) find(ui, "baocaomuontra.loc")).doClick();
+        });
+        waitFor(() -> "PM10_06".equals(table.getValueAt(0, 1)) && !ui.isBusy());
+        assertEquals("2025-11-18", table.getValueAt(0, 5));
+        assertEquals("2025-09-01", table.getValueAt(5, 5));
+
+        // Đưa về Ngày mượn (Tăng dần)
+        SwingUtilities.invokeAndWait(() -> {
+            sapXep.setSelectedItem(SapXepTheo.NGAY_MUON_TANG);
+        });
 
         // Tìm kiếm theo từ khóa tiếng Việt "Epson"
         SwingUtilities.invokeAndWait(() -> {
