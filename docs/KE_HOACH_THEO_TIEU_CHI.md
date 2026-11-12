@@ -19,7 +19,7 @@ Module Thành viên đã được hoàn thiện đủ các tiêu chí 1, 3, 4, 5
 | 4. Chuẩn hóa 3NF | Phụ thuộc hàm, kiểm tra 1NF, 2NF, 3NF, ví dụ đưa về 3NF | cùng file |
 | 5. Hai màn hình nhập | Thêm thành viên (bảng ThanhVien) và Cấp, thu hồi quyền (bảng ThanhVien_QuyenHan); 16 và 8 ca kiểm tra | tab Thành viên; cùng file |
 | 6. Tìm kiếm | Tìm theo MSV, họ tên, ban, trạng thái; xem lịch sử hoạt động | tab Thành viên |
-| 7. Hai báo cáo xuất file | Danh sách thành viên theo ban; Tổng hợp hoạt động trong kỳ; xuất Excel; ghi rõ người lập, nơi nhận | tab Báo cáo; `mau-xuat/` |
+| 7. Hai báo cáo xuất file | Danh sách thành viên theo ban; Tổng hợp hoạt động trong kỳ; xuất PDF; ghi rõ người lập, nơi nhận | tab Báo cáo; `mau-xuat/` |
 | 8. Báo cáo kèm SQL | Báo cáo ngắn (Markdown và Word) có phụ lục SQL | `BAO_CAO_THANH_VIEN.docx` |
 
 Kịch bản demo 8 đến 10 phút: `KICH_BAN_DEMO.md`. Các module khác làm theo đúng khuôn này (mỗi người một thư mục trong `docs/bao-cao-btl/`).

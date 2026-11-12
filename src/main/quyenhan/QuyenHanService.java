@@ -1,5 +1,6 @@
 package quyenhan;
 
+import common.PhienLamViec;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,34 +17,42 @@ public class QuyenHanService {
     }
 
     public void them(QuyenHan quyen) {
+        PhienLamViec.yeuCauBanChuNhiem("quản lý quyền hạn");
         dao.them(validate(quyen));
     }
 
     public void sua(QuyenHan quyen) {
+        PhienLamViec.yeuCauBanChuNhiem("quản lý quyền hạn");
         dao.sua(validate(quyen));
     }
 
     public void xoa(String maQuyenHan) {
+        PhienLamViec.yeuCauBanChuNhiem("quản lý quyền hạn");
         dao.xoa(required(maQuyenHan, "Mã quyền hạn", 20));
     }
 
     public List<QuyenHan> danhSach() {
+        PhienLamViec.yeuCauBanChuNhiem("xem danh mục quyền hạn");
         return dao.danhSach();
     }
 
     public void capQuyen(String msv, String maQuyenHan) {
+        PhienLamViec.yeuCauBanChuNhiem("cấp quyền");
         dao.capQuyen(required(msv, "MSV", 20), required(maQuyenHan, "Mã quyền hạn", 20));
     }
 
     public void thuHoiQuyen(String msv, String maQuyenHan) {
+        PhienLamViec.yeuCauBanChuNhiem("thu hồi quyền");
         dao.thuHoiQuyen(required(msv, "MSV", 20), required(maQuyenHan, "Mã quyền hạn", 20));
     }
 
     public List<QuyenHan> quyenCuaThanhVien(String msv) {
+        PhienLamViec.yeuCauChinhMinhHoacBanChuNhiem(msv, "xem quyền hạn");
         return dao.quyenCuaThanhVien(required(msv, "MSV", 20));
     }
 
     public List<ThanhVienCoQuyen> thanhVienCoQuyen(String maQuyenHan) {
+        PhienLamViec.yeuCauBanChuNhiem("xem thành viên theo quyền");
         return dao.thanhVienCoQuyen(required(maQuyenHan, "Mã quyền hạn", 20));
     }
 

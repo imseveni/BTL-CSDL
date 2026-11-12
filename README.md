@@ -54,8 +54,9 @@ quan-ly-clb/
    ```bash
    cd sql
    mysql --default-character-set=utf8mb4 -u root -p < run_all.sql
+   # Hoặc Get-Content run_all.sql | & "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" --default-character-set=utf8mb4 -u root -p
    ```
-   Dựng lại từ đầu: `mysql --default-character-set=utf8mb4 -u root -p < reset_db.sql` rồi chạy lại `run_all.sql`.
+   Dựng lại từ đầu: `mysql --default-character-set=utf8mb4 -u root -p < reset_db.sql` hoặc 'Get-Content reset_db.sql | & "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" --default-character-set=utf8mb4 -u root -p' rồi chạy lại `run_all.sql`.
    > **Windows:** chạy trong **Command Prompt (cmd)**; PowerShell không hỗ trợ dấu `<`. Cũng có thể mở `mysql --default-character-set=utf8mb4 -u root -p` rồi gõ `SOURCE run_all.sql;`.
    > **Luôn giữ `--default-character-set=utf8mb4`.** Mọi file SQL đã có `SET NAMES utf8mb4;`, nhưng cờ này là lớp bảo vệ thứ hai.
    > **Nếu chữ tiếng Việt trong bảng bị hỏng** (ví dụ `Nguyß╗àn V─ân An`): dữ liệu đã nạp sai bảng mã. Kiểm tra bằng `SELECT HEX(HoVaTen) FROM ThanhVien WHERE MSV='B21DCCN001';`: chữ đúng bắt đầu bằng `4E677579E1BB856E` (Nguyễn). Cách sửa: chạy lại `reset_db.sql` rồi `run_all.sql` bằng lệnh có cờ `--default-character-set=utf8mb4` như trên.

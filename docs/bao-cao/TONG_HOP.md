@@ -5,7 +5,7 @@ Tài liệu của Tú: trạng thái toàn dự án, cách dựng và kiểm tra
 ## 1. Kiến trúc
 
 - **CSDL:** MySQL 8.0.16 trở lên, 16 bảng (`sql/00_schema/schema.sql`), hình mô hình quan hệ đầy đủ ở `docs/erd/Mo_hinh_quan_he_day_du.png`.
-- **Ứng dụng:** Java 17, Maven, JDBC. Mặc định mở cửa sổ Swing 10 tab (mỗi module một tab); module nào chưa có màn hình thì hiện màn hình tạm. Menu dòng lệnh cũ chạy bằng tham số `--console`. Tiến độ chuyển sang Swing: xem [PHAN_CONG_SWING.md](../PHAN_CONG_SWING.md).
+- **Ứng dụng:** Java 17, Maven, JDBC. Mặc định mở cửa sổ Swing, màn hình đầu là chọn vai trò (xem [PHAN_QUYEN.md](../PHAN_QUYEN.md)); chỉ còn 4 tab: Thành viên, Cơ sở vật chất, Mượn – Trả, Báo cáo Mượn – Trả. Menu dòng lệnh cũ chạy bằng tham số `--console`. Tiến độ chuyển sang Swing: xem [PHAN_CONG_SWING.md](../PHAN_CONG_SWING.md).
 - **Cấu hình kết nối:** một nơi duy nhất, `common.Database`. Thứ tự đọc: biến môi trường `DB_URL`, `DB_USER`, `DB_PASSWORD`, rồi `db.properties`, `database.properties`, `database-local.properties`, hoặc cấu hình nhập trong cửa sổ Swing.
 - **Phân quyền MySQL:** `sql/02_security/phan_quyen.sql` (vai trò Thành viên, Ban Chủ nhiệm, Quản trị).
 
@@ -13,7 +13,7 @@ Tài liệu của Tú: trạng thái toàn dự án, cách dựng và kiểm tra
 
 | Module | Người làm | Báo cáo | Đã chạy trên MySQL thật |
 |---|---|---|---|
-| 01 Thành viên | Tú | [01_thanhvien.md](01_thanhvien.md) | Chưa |
+| 01 Thành viên | Tú | [01_thanhvien.md](01_thanhvien.md) | Chưa (đã chạy trên MariaDB 10.x) |
 | 02 Ban chuyên môn | Đông | [02_banchuyenmon.md](02_banchuyenmon.md) | Có (8.0.40) |
 | 03 Quyền hạn | Đông | [03_quyenhan.md](03_quyenhan.md) | Có (8.0.40) |
 | 04 Khóa học | Chiến | [04_khoahoc.md](04_khoahoc.md) | Có (8.0.46) |
@@ -23,6 +23,7 @@ Tài liệu của Tú: trạng thái toàn dự án, cách dựng và kiểm tra
 | 08 Đánh giá | Đông | [08_danhgia.md](08_danhgia.md) | Có (8.0.40) |
 | 09 Cơ sở vật chất | Trường | [09_cosovatchat.md](09_cosovatchat.md) | Chưa (theo biên bản bàn giao) |
 | 10 Mượn – Trả | Trường | [10_muontra.md](10_muontra.md) | Chưa (theo biên bản bàn giao) |
+| 11 Báo cáo mượn – trả | Minh | [11_baocaomuontra.md](11_baocaomuontra.md) | Chưa (đã chạy trên MariaDB 10.x) |
 
 Các module đã chạy riêng lẻ trên MySQL, nhưng **chưa có bằng chứng cả dự án chạy liền từ DB trống** sau khi gộp. Đây là việc phải làm trước khi nộp (mục 4).
 
@@ -30,7 +31,7 @@ Các module đã chạy riêng lẻ trên MySQL, nhưng **chưa có bằng chứ
 
 - **MSVQuanLy:** schema từng bị chuyển cột người quản lý sang `ChiTietMuon` (theo khung kết tập trong ERD) làm lệch với module 09 và 10 đã hoàn thành. Đã đưa lại về `CoSoVatChat`; xem điểm #4 trong [DECISIONS.md](../DECISIONS.md).
 - **Cấu hình DB:** module console đọc `db.properties` còn module Swing đọc `database.properties`/biến môi trường; nay cùng đi qua `common.Database`.
-- **Menu chính:** `SwingApp` và `ClubWorkspace` nằm ở package mặc định nên không gọi được từ menu; đã chuyển vào package `app` và thêm `SwingLauncherModule`. Menu có đủ 10 module, một module lỗi không làm sập chương trình.
+- **Menu chính:** `SwingApp` và `ClubWorkspace` nằm ở package mặc định nên không gọi được từ menu; đã chuyển vào package `app` và thêm `SwingLauncherModule`. Menu console có đủ module có mã console, một module lỗi không làm sập chương trình.
 - **Dữ liệu nền:** `seed_master.sql` được viết. Module 06 tham chiếu `B21DCCN001..004` (có trong seed nền); module 03 dùng mã quyền riêng (dạng `QH03_...`) nên không trùng `QH01..QH05`. Đã kiểm tra bằng bản mô phỏng SQLite: schema, seed nền và seed của 10 module nạp liền không vi phạm khóa ngoại (riêng một câu `UPDATE` cú pháp MySQL ở cuối seed module 10 không chạy được trên SQLite nên chưa kiểm tra).
 
 ## 4. Cách dựng và kiểm tra (chạy trên MySQL của bạn)
@@ -79,3 +80,10 @@ Module Thành viên đã đủ các tiêu chí 1, 3, 4, 5, 6, 7 và báo cáo m�
 | 10 Mượn – Trả | Chưa | Trường |
 
 Cập nhật bảng này khi PR của từng module được merge.
+
+## 5. Bản tích hợp 11/2026
+
+- Gỡ tab báo cáo mẫu của Trường; dùng báo cáo của Minh. SQL báo cáo thành thủ tục `sp_BaoCaoMuonTra`, `sp_ThongKeMuonTra` nằm trong `run_all.sql`; seed báo cáo dùng chung dữ liệu module 09, 10.
+- Thêm màn hình chọn vai trò và phân quyền ở tầng Service ([PHAN_QUYEN.md](../PHAN_QUYEN.md)).
+- Chỉ còn giao diện Swing của Thành viên, Cơ sở vật chất, Mượn – Trả, Báo cáo Mượn – Trả. Schema, ERD, SQL, seed và mã Dao/Service của mọi module được giữ nguyên. Tag `archive/truoc-khi-gon-giao-dien` giữ bản cũ.
+- Đã chạy `reset_db.sql` + `run_all.sql` từ DB trống và toàn bộ test SQL và JUnit trên **MariaDB 10.x** (không có lỗi). Chưa chạy trên MySQL 8: cần chạy lại `sql/modules/*/tests.sql` và `mvn test -Dclb.mysql.tests=true` trước buổi demo. Test SQL của module 04, 05, 09 đã nhận cả mã lỗi CHECK 3819 (MySQL) và 4025 (MariaDB).

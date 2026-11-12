@@ -270,9 +270,9 @@ class BaoCaoMuonTraTest {
         assertTrue(Files.exists(filePdf));
         assertTrue(Files.size(filePdf) > 20_000, "File PDF nhiều trang phải có dung lượng hợp lệ");
 
-        String noiDungPdf = new String(Files.readAllBytes(filePdf), StandardCharsets.UTF_8);
-        assertTrue(noiDungPdf.startsWith("%PDF-1.4"));
-        assertTrue(noiDungPdf.contains("/Count " + cacTrang.size()));
+        String noiDungPdf = vanBanPdf(filePdf);
+        assertTrue(new String(Files.readAllBytes(filePdf), StandardCharsets.ISO_8859_1).startsWith("%PDF-1.4"));
+        assertTrue(new String(Files.readAllBytes(filePdf), StandardCharsets.ISO_8859_1).contains("/Count " + cacTrang.size()));
         assertTrue(noiDungPdf.contains("PM_LON_001"), "Không mất bản ghi đầu tiên");
         assertTrue(noiDungPdf.contains("PM_LON_030"), "Không mất bản ghi ở giữa");
         assertTrue(noiDungPdf.contains("PM_LON_060"), "Không mất bản ghi cuối cùng");
@@ -293,7 +293,7 @@ class BaoCaoMuonTraTest {
         Path pdfPath = exporter.xuatFile(baoCao, tempDir.resolve(tenFile));
         assertTrue(Files.exists(pdfPath));
 
-        String utf8Content = new String(Files.readAllBytes(pdfPath), StandardCharsets.UTF_8);
+        String utf8Content = vanBanPdf(pdfPath);
         assertTrue(utf8Content.contains("BÁO CÁO MƯỢN – TRẢ CƠ SỞ VẬT CHẤT"));
         assertTrue(utf8Content.contains("Máy chiếu Epson"));
         assertTrue(utf8Content.contains("Nguyễn Văn An"));
@@ -380,11 +380,25 @@ class BaoCaoMuonTraTest {
         });
         waitFor(() -> Files.exists(outPdf) && !ui.isBusy());
 
-        String pdfText = new String(Files.readAllBytes(outPdf), StandardCharsets.UTF_8);
+        String pdfText = vanBanPdf(outPdf);
         assertTrue(pdfText.contains("Tổng số lượt mượn: 3"));
         assertTrue(pdfText.contains("PM10_02"));
         assertTrue(pdfText.contains("PM10_03"));
         assertFalse(pdfText.contains("PM10_01"), "File PDF chỉ chứa đúng dữ liệu đang lọc trên giao diện");
+    }
+
+    /** Đọc phần văn bản báo cáo được nhúng trong thuộc tính Subject của PDF (chữ trên trang là ảnh). */
+    private static String vanBanPdf(Path pdf) throws Exception {
+        String raw = new String(Files.readAllBytes(pdf), java.nio.charset.StandardCharsets.ISO_8859_1);
+        int a = raw.indexOf("/Subject <");
+        assertTrue(a >= 0, "PDF phải có Subject chứa nội dung báo cáo");
+        int b = raw.indexOf('>', a + 10);
+        String hex = raw.substring(a + 10, b);
+        byte[] bytes = new byte[hex.length() / 2];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
+        }
+        return new String(bytes, java.nio.charset.StandardCharsets.UTF_16);
     }
 
     private static Component find(Component root, String name) {

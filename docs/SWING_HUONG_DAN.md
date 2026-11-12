@@ -7,7 +7,7 @@ Mục tiêu: cả 10 module cùng nằm trong **một cửa sổ chính, mỗi m
 ## 1. Kiến trúc
 
 ```
-app.Main ──(mặc định)──> app.SwingApp ──> ClubWorkspace (cửa sổ chính, 10 tab, nút Kết nối MySQL)
+app.Main ──(mặc định)──> app.SwingApp ──> DangNhapPanel (chọn vai trò) rồi ClubWorkspace (cửa sổ chính; tab theo vai trò, nút Kết nối MySQL, Đăng xuất)
         └─(--console)──> app.MainMenu  (menu dòng lệnh cũ, giữ làm công cụ phụ)
 
 ClubWorkspace  <──  app.SwingModules.all()  (danh sách 10 module, chỉ Tú sửa)

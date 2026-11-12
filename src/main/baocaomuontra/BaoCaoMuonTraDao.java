@@ -4,6 +4,7 @@ import baocaomuontra.BoLocBaoCaoMuonTra.LoaiThoiGian;
 import common.ConnectionProvider;
 import common.DataAccessException;
 import config.DBConnection;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -19,34 +20,8 @@ import java.util.List;
  */
 public class BaoCaoMuonTraDao {
 
-    private static final String BASE_SELECT = """
-            SELECT pm.MaPhieuMuon,
-                   ct.MaThietBi,
-                   tb.TenThietBi,
-                   pm.MSVNguoiMuon,
-                   tv.HoVaTen AS TenNguoiMuon,
-                   ct.SoLuongMuon,
-                   pm.NgayMuon,
-                   pm.NgayHenTra,
-                   ct.NgayTraThucTe,
-                   pm.MucDichMuon
-            FROM ChiTietMuon ct
-            JOIN PhieuMuon pm ON pm.MaPhieuMuon = ct.MaPhieuMuon
-            JOIN CoSoVatChat tb ON tb.MaThietBi = ct.MaThietBi
-            LEFT JOIN ThanhVien tv ON tv.MSV = pm.MSVNguoiMuon
-            WHERE pm.TrangThaiDuyet = 'DaDuyet'
-            """;
-
-    private static final String SQL_THEO_NGAY_MUON = BASE_SELECT + """
-              AND pm.NgayMuon BETWEEN ? AND ?
-            ORDER BY pm.NgayMuon ASC, pm.MaPhieuMuon ASC, ct.MaThietBi ASC
-            """;
-
-    private static final String SQL_THEO_NGAY_TRA = BASE_SELECT + """
-              AND ct.NgayTraThucTe IS NOT NULL
-              AND ct.NgayTraThucTe BETWEEN ? AND ?
-            ORDER BY ct.NgayTraThucTe ASC, pm.MaPhieuMuon ASC, ct.MaThietBi ASC
-            """;
+    /** Truy vấn nằm trong thủ tục sp_BaoCaoMuonTra (sql/modules/11_baocaomuontra/queries.sql). */
+    private static final String SQL_BAO_CAO = "{CALL sp_BaoCaoMuonTra(?, ?, ?, ?)}";
 
     private static final String SQL_THANH_VIEN_CLB = """
             SELECT tv.MSV, tv.HoVaTen, tv.ChucVu, b.TenBan
@@ -74,14 +49,16 @@ public class BaoCaoMuonTraDao {
             LocalDate denNgay,
             LoaiThoiGian loaiThoiGian,
             LocalDate ngayMoc) {
-        String sql = loaiThoiGian == LoaiThoiGian.NGAY_TRA ? SQL_THEO_NGAY_TRA : SQL_THEO_NGAY_MUON;
+        String loai = loaiThoiGian == LoaiThoiGian.NGAY_TRA ? "NGAY_TRA" : "NGAY_MUON";
         LocalDate moc = ngayMoc == null ? LocalDate.now() : ngayMoc;
         List<BaoCaoMuonTraItem> items = new ArrayList<>();
 
         try (Connection conn = connections.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
+                CallableStatement ps = conn.prepareCall(SQL_BAO_CAO)) {
             ps.setDate(1, Date.valueOf(tuNgay));
             ps.setDate(2, Date.valueOf(denNgay));
+            ps.setString(3, loai);
+            ps.setDate(4, Date.valueOf(moc));
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

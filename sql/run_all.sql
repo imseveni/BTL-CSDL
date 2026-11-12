@@ -28,3 +28,7 @@ SOURCE modules/07_thuchi/queries.sql;
 SOURCE modules/08_danhgia/queries.sql;
 SOURCE modules/09_cosovatchat/queries.sql;
 SOURCE modules/10_muontra/queries.sql;
+
+-- Module 11 (báo cáo mượn – trả): thủ tục báo cáo, rồi dữ liệu mẫu đi qua trigger của module 10.
+SOURCE modules/11_baocaomuontra/queries.sql;
+SOURCE modules/11_baocaomuontra/seed.sql;

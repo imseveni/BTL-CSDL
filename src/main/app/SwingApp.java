@@ -2,6 +2,7 @@ package app;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import common.PhienLamViec;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -20,18 +21,23 @@ public final class SwingApp {
         SwingUtilities.invokeLater(() -> {
 
             // Mở cửa sổ độc lập: bấm nút X thì thoát cả chương trình.
-            JFrame frame = createFrame(JFrame.EXIT_ON_CLOSE, 0);
+            JFrame frame = createFrame(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
         });
     }
 
     /**
-     * Tạo cửa sổ chính gồm 10 tab (chưa hiển thị). Phải gọi trên luồng giao diện (EDT).
+     * Tạo cửa sổ (chưa hiển thị). Mở lên là màn hình chọn vai trò (Thành viên hoặc Ban Chủ nhiệm); đăng nhập xong
+     * cửa sổ chuyển sang các tab dành cho vai trò đó, và nút Đăng xuất đưa về màn hình chọn vai trò.
+     * Phải gọi trên luồng giao diện (EDT).
      *
-     * @param closeOperation JFrame.EXIT_ON_CLOSE khi chạy riêng, JFrame.DISPOSE_ON_CLOSE khi mở từ menu chính
-     * @param tab            tab mở sẵn, đếm từ 0 theo thứ tự module (0 = Thành viên ... 9 = Mượn – Trả)
+     * @param closeOperation JFrame.EXIT_ON_CLOSE khi chạy riêng
      */
-    public static JFrame createFrame(int closeOperation, int tab) {
+    public static JFrame createFrame(int closeOperation) {
+        return createFrame(closeOperation, new DangNhapService());
+    }
+
+    static JFrame createFrame(int closeOperation, DangNhapService dangNhap) {
 
         // Thiết lập giao diện.
         configureLookAndFeel();
@@ -43,10 +49,7 @@ public final class SwingApp {
         // Hành vi khi người dùng bấm nút X của cửa sổ chính.
         frame.setDefaultCloseOperation(closeOperation);
 
-        // Đưa nội dung các module vào cửa sổ
-        ClubWorkspace workspace = new ClubWorkspace(SwingModules.all());
-        workspace.showTab(tab);
-        frame.setContentPane(workspace);
+        showLogin(frame, dangNhap);
 
         // Đặt kích thước, vị trí và hiển thị cửa sổ
         // Giới hạn kích thước nhỏ nhất
@@ -62,6 +65,26 @@ public final class SwingApp {
         frame.setLocationRelativeTo(null);
 
         return frame;
+    }
+
+    /** Màn hình chọn vai trò; phiên làm việc được đặt lại để không giữ quyền của người trước. */
+    static void showLogin(JFrame frame, DangNhapService dangNhap) {
+        PhienLamViec.datLai();
+        frame.setTitle("Quản lý Câu lạc bộ – Đăng nhập");
+        frame.setContentPane(new DangNhapPanel(dangNhap, nguoi -> showWorkspace(frame, dangNhap, nguoi)));
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    static void showWorkspace(JFrame frame, DangNhapService dangNhap, PhienLamViec.NguoiDung nguoi) {
+        PhienLamViec.batDau(nguoi);
+        String mota = nguoi.hoVaTen() + " (" + nguoi.msv() + ")  ·  " + nguoi.vaiTro().ten();
+        frame.setTitle("Quản lý Câu lạc bộ – " + nguoi.vaiTro().ten());
+        // Đăng xuất: bỏ cửa sổ làm việc cũ, quay về màn hình chọn vai trò.
+        frame.setContentPane(new ClubWorkspace(SwingModules.choVaiTro(nguoi.vaiTro()), mota,
+                () -> showLogin(frame, dangNhap)));
+        frame.revalidate();
+        frame.repaint();
     }
 
     // Phương thức chọn kiểu giao diện

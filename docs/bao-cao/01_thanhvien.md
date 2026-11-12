@@ -71,11 +71,11 @@ Dữ liệu giả dùng chung cho cả nhóm, chạy lại được nhờ `INSER
 
 ## 4b. Giao diện Swing và báo cáo
 
-Tab **Thành viên** trong cửa sổ chính gồm hai tab con: *Quản lý thành viên* (bảng thành viên có tìm kiếm; phần dưới có tab Lịch sử hoạt động và tab Quyền hạn để cấp, thu hồi quyền) và *Báo cáo* (hai báo cáo xem trên màn hình và xuất Excel). Hai báo cáo dùng thủ tục `sp_BaoCaoDanhSachThanhVien` và `sp_BaoCaoHoatDongThanhVien`; file Excel do `common.XlsxWriter` ghi, không cần thư viện ngoài. Báo cáo đầy đủ theo tiêu chí chấm: [`docs/bao-cao-btl/thanh-vien/BAO_CAO_THANH_VIEN.md`](../bao-cao-btl/thanh-vien/BAO_CAO_THANH_VIEN.md).
+Tab **Thành viên** trong cửa sổ chính gồm hai tab con: *Quản lý thành viên* (bảng thành viên có tìm kiếm; phần dưới có tab Lịch sử hoạt động và tab Quyền hạn để cấp, thu hồi quyền) và *Báo cáo* (hai báo cáo xem trên màn hình và xuất PDF). Hai báo cáo dùng thủ tục `sp_BaoCaoDanhSachThanhVien` và `sp_BaoCaoHoatDongThanhVien`; file PDF do `common.BaoCaoPdf` ghi (mẫu chung với báo cáo Mượn – Trả), không cần thư viện ngoài. Báo cáo đầy đủ theo tiêu chí chấm: [`docs/bao-cao-btl/thanh-vien/BAO_CAO_THANH_VIEN.md`](../bao-cao-btl/thanh-vien/BAO_CAO_THANH_VIEN.md).
 
 ## 5. Kiểm thử
 
 - `tests.sql`: dữ liệu thử mang mã `T_TU_*`, tạo trong một transaction rồi ROLLBACK. Có các ca đúng (thêm có và không có giá trị tùy chọn, cập nhật, đổi trạng thái, xóa) và 29 ca sai (kể cả tham số sai của hai thủ tục báo cáo), mỗi ca đối chiếu đúng `MYSQL_ERRNO` 1644.
-- Java, dùng Dao giả nên không cần MySQL: `ThanhVienServiceTest` (9 test), `ThanhVienMenuTest` (7), `ThanhVienSwingUiTest` (5: nạp dữ liệu, bộ lọc, chọn dòng, tab quyền hạn, cấp quyền), `ThanhVienBaoCaoUiTest` (4), `BaoCaoThanhVienTest` (5), `common/XlsxWriterTest` (7: cấu trúc file, ký tự đặc biệt, kiểu ô, cấu hình in).
+- Java, dùng Dao giả nên không cần MySQL: `ThanhVienServiceTest` (9 test), `ThanhVienMenuTest` (7), `ThanhVienSwingUiTest` (5: nạp dữ liệu, bộ lọc, chọn dòng, tab quyền hạn, cấp quyền), `ThanhVienBaoCaoUiTest` (4), `BaoCaoThanhVienTest` (5), `common/BaoCaoPdfTest` (6: số trang, khổ A4 ngang, báo cáo rỗng, cấu trúc file PDF, nội dung tiếng Việt).
 - Đã chạy trong môi trường soạn thảo: toàn bộ 79 test Java của dự án không có test nào lỗi (74 đạt, 5 bị bỏ qua vì cần MySQL). File Excel xuất ra được đọc lại bằng openpyxl và in thử bằng LibreOffice để kiểm tra bố cục. Seed nền, các view và câu truy vấn của hai thủ tục báo cáo được kiểm tra khớp schema bằng bản mô phỏng SQLite.
 - **Chưa chạy trên MySQL thật:** các thủ tục và `tests.sql` của module này. Cần chạy theo mục "Cách chạy" của `TONG_HOP.md` và dán dòng `PASS module 01: dữ liệu thử đã rollback` vào đây.

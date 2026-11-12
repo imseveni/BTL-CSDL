@@ -1,5 +1,6 @@
 package cosovatchat;
 
+import common.PhienLamViec;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,6 +34,7 @@ public class CoSoVatChatService {
 
     /** soLuongKhaDung null -> bằng tổng; msvQuanLy null hoặc trống -> chưa có người quản lý. */
     public void themMoi(String ma, String ten, int tong, Integer soLuongKhaDung, String msvQuanLy) {
+        PhienLamViec.yeuCauBanChuNhiem("thêm thiết bị");
         String maSach = required(ma, "Mã thiết bị", 20);
         String tenSach = required(ten, "Tên thiết bị", 150);
         if (tong <= 0) {
@@ -45,6 +47,7 @@ public class CoSoVatChatService {
     }
 
     public void capNhat(String ma, String ten, int tong) {
+        PhienLamViec.yeuCauBanChuNhiem("sửa thiết bị");
         String maSach = required(ma, "Mã thiết bị", 20);
         String tenSach = required(ten, "Tên thiết bị", 150);
         if (tong <= 0) {
@@ -55,6 +58,7 @@ public class CoSoVatChatService {
 
     /** msv null hoặc trống -> bỏ người quản lý. */
     public void ganNguoiQuanLy(String ma, String msv) {
+        PhienLamViec.yeuCauBanChuNhiem("gán người quản lý thiết bị");
         dao.ganNguoiQuanLy(required(ma, "Mã thiết bị", 20), optional(msv, "MSV người quản lý", 20));
     }
 

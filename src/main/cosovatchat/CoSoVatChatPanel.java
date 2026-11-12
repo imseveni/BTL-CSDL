@@ -1,5 +1,6 @@
 package cosovatchat;
 
+import common.PhienLamViec;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -85,6 +86,12 @@ public class CoSoVatChatPanel extends JPanel {
             }
         });
         capNhatNut();
+        if (PhienLamViec.laThanhVien()) {
+            // Thành viên chỉ tra cứu thiết bị và tình trạng khả dụng; thêm, sửa, gán người quản lý là việc của Ban Chủ nhiệm.
+            nutThem.setVisible(false);
+            nutSua.setVisible(false);
+            nutGan.setVisible(false);
+        }
 
         addHierarchyListener(e -> {
             if (!daNapLanDau && isShowing()) {

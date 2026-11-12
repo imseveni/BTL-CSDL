@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 /**
- * Cửa sổ chạy thử hai tab của Trường (Cơ sở vật chất, Mượn – Trả) khi chưa ghép vào cửa sổ chính của nhóm.
+ * Cửa sổ chạy thử hai tab của Trường (không qua màn hình đăng nhập: quyền quản trị) (Cơ sở vật chất, Mượn – Trả) khi chưa ghép vào cửa sổ chính của nhóm.
  * Cần MySQL đã dựng bằng run_all.sql và file db.properties.
  * Chạy sau khi biên dịch:  java -cp target/classes muontra.MuonTraDemoFrame
  */

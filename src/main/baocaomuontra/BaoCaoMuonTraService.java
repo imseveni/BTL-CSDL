@@ -1,5 +1,6 @@
 package baocaomuontra;
 
+import common.PhienLamViec;
 import baocaomuontra.BoLocBaoCaoMuonTra.LoaiThoiGian;
 import baocaomuontra.BoLocBaoCaoMuonTra.SapXepTheo;
 import baocaomuontra.BoLocBaoCaoMuonTra.TrangThaiLoc;
@@ -50,6 +51,7 @@ public class BaoCaoMuonTraService {
      * Lập báo cáo mượn – trả cơ sở vật chất theo bộ lọc người dùng chọn.
      */
     public KetQuaBaoCaoMuonTra lapBaoCao(BoLocBaoCaoMuonTra boLoc) {
+        PhienLamViec.yeuCauBanChuNhiem("lập báo cáo mượn – trả");
         if (boLoc == null) {
             throw new IllegalArgumentException("Điều kiện lọc báo cáo không được để trống.");
         }
@@ -98,13 +100,38 @@ public class BaoCaoMuonTraService {
      * Lấy danh sách thành viên trong CLB để chọn làm người lập báo cáo.
      */
     public List<NguoiLapBaoCao> danhSachThanhVienClb() {
-        List<NguoiLapBaoCao> ds = dao.danhSachThanhVienClb();
-        return ds == null || ds.isEmpty() ? List.of(NguoiLapBaoCao.MAC_DINH) : ds;
+        PhienLamViec.yeuCauBanChuNhiem("lập báo cáo mượn – trả");
+        List<NguoiLapBaoCao> ds = nguoiDangNhapLenDau(dao.danhSachThanhVienClb());
+        return ds.isEmpty() ? List.of(NguoiLapBaoCao.MAC_DINH) : ds;
+    }
+
+    /** Người đang đăng nhập (Ban Chủ nhiệm) là người lập báo cáo mặc định: đặt lên đầu danh sách. */
+    private static List<NguoiLapBaoCao> nguoiDangNhapLenDau(List<NguoiLapBaoCao> ds) {
+        if (ds == null) {
+            return List.of();
+        }
+        String msv = PhienLamViec.msvHienTai();
+        if (msv == null) {
+            return ds;
+        }
+        List<NguoiLapBaoCao> ketQua = new ArrayList<>(ds.size());
+        for (NguoiLapBaoCao tv : ds) {
+            if (msv.equalsIgnoreCase(tv.msv())) {
+                ketQua.add(0, tv);
+            } else {
+                ketQua.add(tv);
+            }
+        }
+        return ketQua;
     }
 
     private NguoiLapBaoCao chonNguoiLapMacDinh(List<BaoCaoMuonTraItem> duLieuGoc) {
-        List<NguoiLapBaoCao> ds = dao.danhSachThanhVienClb();
-        if (ds != null && !ds.isEmpty()) {
+        List<NguoiLapBaoCao> ds = nguoiDangNhapLenDau(dao.danhSachThanhVienClb());
+        String msvDangNhap = PhienLamViec.msvHienTai();
+        if (!ds.isEmpty() && msvDangNhap != null && msvDangNhap.equalsIgnoreCase(ds.get(0).msv())) {
+            return ds.get(0);
+        }
+        if (!ds.isEmpty()) {
             // Ưu tiên chọn thành viên thuộc Ban Hậu cần / Cơ sở vật chất hoặc thành viên đầu tiên trong CLB
             for (NguoiLapBaoCao tv : ds) {
                 if (tv.tenBan() != null && tv.tenBan().toLowerCase(Locale.ROOT).contains("hậu cần")) {

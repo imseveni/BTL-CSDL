@@ -1,43 +1,36 @@
 package app;
 
+import baocaomuontra.BaoCaoMuonTraSwingModule;
+import common.PhienLamViec.VaiTro;
 import common.SwingModule;
-import thanhvien.ThanhVienSwingModule;
-import banchuyenmon.BanChuyenMonSwingModule;
-import quyenhan.QuyenHanSwingModule;
-import khoahoc.KhoaHocSwingModule;
-import duan.DuAnSwingModule;
-import sukien.SuKienSwingModule;
-import thuchi.ThuChiSwingModule;
-import danhgia.DanhGiaSwingModule;
 import cosovatchat.CoSoVatChatSwingModule;
 import muontra.MuonTraSwingModule;
-import baocaomuontra.BaoCaoMuonTraSwingModule;
+import thanhvien.HoSoCaNhanSwingModule;
+import thanhvien.ThanhVienSwingModule;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Danh sách module hiển thị thành tab trong cửa sổ chính, theo đúng số thứ tự 01 đến 10 của
- * docs/PHAN_CONG.md. Chỉ Tú sửa file này; các thành viên chỉ sửa lớp XxxSwingModule trong package của mình.
+ * Các tab của cửa sổ chính theo vai trò (xem docs/PHAN_QUYEN.md). Bản tích hợp chỉ giữ giao diện Swing của
+ * Thành viên, Cơ sở vật chất, Mượn – Trả và Báo cáo Mượn – Trả; các module khác vẫn còn mã và SQL nhưng
+ * không có tab. Chỉ Tú sửa file này.
  */
 public final class SwingModules {
 
     private SwingModules() {
     }
 
+    /** Ban Chủ nhiệm / Người quản lý: đầy đủ bốn tab. */
     public static List<SwingModule> all() {
-        List<SwingModule> list = new ArrayList<>();
-        list.add(new ThanhVienSwingModule());                                     // 01
-        list.add(new BanChuyenMonSwingModule());                                     // 02
-        list.add(new QuyenHanSwingModule());                                     // 03
-        list.add(new KhoaHocSwingModule());                                     // 04
-        list.add(new DuAnSwingModule());                                     // 05
-        list.add(new SuKienSwingModule());                                     // 06
-        list.add(new ThuChiSwingModule());                                     // 07
-        list.add(new DanhGiaSwingModule());                                     // 08
-        list.add(new CoSoVatChatSwingModule());                                     // 09
-        list.add(new MuonTraSwingModule());                                     // 10
-        list.add(new BaoCaoMuonTraSwingModule());                               // 11
-        return list;
+        return choVaiTro(VaiTro.BAN_CHU_NHIEM);
+    }
+
+    public static List<SwingModule> choVaiTro(VaiTro vaiTro) {
+        if (vaiTro == VaiTro.THANH_VIEN) {
+            // Thành viên: hồ sơ của mình, tra cứu thiết bị, phiếu mượn của mình. Các panel tự ẩn nút quản lý.
+            return List.of(new HoSoCaNhanSwingModule(), new CoSoVatChatSwingModule(), new MuonTraSwingModule());
+        }
+        return List.of(new ThanhVienSwingModule(), new CoSoVatChatSwingModule(), new MuonTraSwingModule(),
+                new BaoCaoMuonTraSwingModule());
     }
 }

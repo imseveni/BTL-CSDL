@@ -1,5 +1,6 @@
 package muontra;
 
+import common.PhienLamViec;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,7 @@ public class PhieuMuonService {
     public void taoPhieu(String ma, LocalDate ngayMuon, LocalDate ngayHenTra, String mucDich, String msv) {
         String maSach = required(ma, "Mã phiếu mượn", 20);
         String msvSach = required(msv, "MSV người mượn", 20);
+        PhienLamViec.yeuCauChinhMinhHoacBanChuNhiem(msvSach, "lập phiếu mượn");
         if (ngayMuon == null || ngayHenTra == null) {
             throw new IllegalArgumentException("Phải nhập ngày mượn và ngày hẹn trả.");
         }
@@ -30,6 +32,7 @@ public class PhieuMuonService {
 
     public void themThietBi(String maPhieu, String maThietBi, int soLuong) {
         String phieu = required(maPhieu, "Mã phiếu mượn", 20);
+        kiemTraPhieuCuaMinh(phieu, "thêm thiết bị vào phiếu mượn");
         String thietBi = required(maThietBi, "Mã thiết bị", 20);
         if (soLuong <= 0) {
             throw new IllegalArgumentException("Số lượng mượn phải lớn hơn 0.");
@@ -38,19 +41,23 @@ public class PhieuMuonService {
     }
 
     public void duyet(String maPhieu) {
+        PhienLamViec.yeuCauBanChuNhiem("duyệt phiếu mượn");
         dao.duyet(required(maPhieu, "Mã phiếu mượn", 20));
     }
 
     public void tuChoi(String maPhieu) {
+        PhienLamViec.yeuCauBanChuNhiem("từ chối phiếu mượn");
         dao.tuChoi(required(maPhieu, "Mã phiếu mượn", 20));
     }
 
     /** ngayTra null -> hôm nay (do thủ tục xử lý). */
     public void traThietBi(String maPhieu, String maThietBi, LocalDate ngayTra) {
+        PhienLamViec.yeuCauBanChuNhiem("ghi nhận trả thiết bị");
         dao.traThietBi(required(maPhieu, "Mã phiếu mượn", 20), required(maThietBi, "Mã thiết bị", 20), ngayTra);
     }
 
     public void traTatCa(String maPhieu, LocalDate ngayTra) {
+        PhienLamViec.yeuCauBanChuNhiem("ghi nhận trả thiết bị");
         dao.traTatCa(required(maPhieu, "Mã phiếu mượn", 20), ngayTra);
     }
 
@@ -59,34 +66,60 @@ public class PhieuMuonService {
         if (phieu == null) {
             throw new IllegalArgumentException("Phiếu mượn không tồn tại.");
         }
+        PhienLamViec.yeuCauChinhMinhHoacBanChuNhiem(phieu.msvNguoiMuon(), "xem phiếu mượn");
         return phieu;
     }
 
     public List<ChiTietMuon> chiTiet(String maPhieu) {
-        return dao.chiTietCuaPhieu(required(maPhieu, "Mã phiếu mượn", 20));
+        String ma = required(maPhieu, "Mã phiếu mượn", 20);
+        kiemTraPhieuCuaMinh(ma, "xem chi tiết phiếu mượn");
+        return dao.chiTietCuaPhieu(ma);
     }
 
     /** trangThai null/trống -> tất cả; giá trị khác phải là ChoDuyet, DaDuyet hoặc TuChoi. */
     public List<PhieuMuon> danhSachPhieu(String trangThai) {
         if (trangThai == null || trangThai.isBlank()) {
-            return dao.danhSachPhieu(null);
+            return chiPhieuCuaMinh(dao.danhSachPhieu(null));
         }
         String t = trangThai.strip();
         if (!t.equals(PhieuMuon.CHO_DUYET) && !t.equals(PhieuMuon.DA_DUYET) && !t.equals(PhieuMuon.TU_CHOI)) {
             throw new IllegalArgumentException("Trạng thái phải là ChoDuyet, DaDuyet hoặc TuChoi.");
         }
-        return dao.danhSachPhieu(t);
+        return chiPhieuCuaMinh(dao.danhSachPhieu(t));
+    }
+
+    /** Thành viên chỉ thấy phiếu của chính mình; Ban Chủ nhiệm thấy tất cả. */
+    private static List<PhieuMuon> chiPhieuCuaMinh(List<PhieuMuon> ds) {
+        if (PhienLamViec.laBanChuNhiem()) {
+            return ds;
+        }
+        String msv = PhienLamViec.msvHienTai();
+        return ds.stream().filter(p -> p.msvNguoiMuon() != null && p.msvNguoiMuon().equalsIgnoreCase(msv)).toList();
+    }
+
+    private void kiemTraPhieuCuaMinh(String maPhieu, String hanhDong) {
+        if (PhienLamViec.laBanChuNhiem()) {
+            return;
+        }
+        PhieuMuon phieu = dao.timPhieu(maPhieu);
+        if (phieu == null) {
+            throw new IllegalArgumentException("Phiếu mượn không tồn tại.");
+        }
+        PhienLamViec.yeuCauChinhMinhHoacBanChuNhiem(phieu.msvNguoiMuon(), hanhDong);
     }
 
     public List<DongTheoDoi> thietBiChuaTra() {
+        PhienLamViec.yeuCauBanChuNhiem("xem danh sách thiết bị chưa trả");
         return dao.thietBiChuaTra();
     }
 
     public List<DongTheoDoi> thietBiTraMuon() {
+        PhienLamViec.yeuCauBanChuNhiem("xem theo dõi mượn trả");
         return dao.thietBiTraMuon();
     }
 
     public List<LichSuMuon> lichSuMuon(String msv) {
+        PhienLamViec.yeuCauChinhMinhHoacBanChuNhiem(msv, "xem lịch sử mượn");
         return dao.lichSuMuon(required(msv, "MSV", 20));
     }
 

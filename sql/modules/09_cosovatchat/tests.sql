@@ -6,7 +6,7 @@ USE QuanLyCauLacBo;
 -- Chạy trên kết nối riêng sau run_all.sql; không chạy trong transaction đang mở.
 -- Fixture T_TRUONG_* tự tạo (không phụ thuộc seed_master), cố ý dùng INSERT thường:
 -- nếu trùng sẽ dừng, không sửa dữ liệu sẵn có.
--- Handler bắt đúng MYSQL_ERRNO mong đợi (1644 = SIGNAL của thủ tục/trigger, 3819 = CHECK,
+-- Handler bắt đúng MYSQL_ERRNO mong đợi (1644 = SIGNAL của thủ tục/trigger, 3819 = CHECK (MySQL; MariaDB báo 4025),
 -- 1451 = FK chặn xóa); mọi lỗi khác làm test thất bại. Cuối cùng ROLLBACK toàn bộ.
 -- Các ca sai luôn kiểm tra thêm dữ liệu KHÔNG bị đổi, để chắc lỗi đến từ đúng quy tắc.
 DROP PROCEDURE IF EXISTS sp_TestTruong09;
@@ -222,7 +222,7 @@ BEGIN
         DECLARE CONTINUE HANDLER FOR SQLEXCEPTION GET DIAGNOSTICS CONDITION 1 v_error = MYSQL_ERRNO;
         UPDATE CoSoVatChat SET SoLuongKhaDung = TongSoLuong + 1 WHERE MaThietBi = 'T_TRUONG_TB1';
     END;
-    IF NOT COALESCE((v_error = 3819), FALSE) THEN
+    IF NOT COALESCE((v_error IN (3819, 4025)), FALSE) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'FAIL: CHECK khả dụng không vượt tổng';
     END IF;
     SET v_error = 0;

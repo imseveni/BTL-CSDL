@@ -1,3 +1,5 @@
+> **Đã thay thế (11/2026):** bản tích hợp chỉ còn giao diện Thành viên, Cơ sở vật chất, Mượn – Trả, Báo cáo Mượn – Trả và có chọn vai trò. Xem [PHAN_QUYEN.md](PHAN_QUYEN.md). Nội dung dưới đây là kế hoạch cũ.
+
 # Phân công giai đoạn Swing (Giai đoạn 1)
 
 > **Cập nhật theo tiêu chí chấm của cô:** chỉ cần 2 màn hình nhập, 1 màn hình tìm kiếm và 2 báo cáo xuất file, đã có 3 màn hình (Thành viên, Khóa học, Dự án). Các màn hình Swing còn lại trong tài liệu này chuyển thành **tùy chọn**, chỉ làm sau khi xong các việc trong [KE_HOACH_THEO_TIEU_CHI.md](KE_HOACH_THEO_TIEU_CHI.md).

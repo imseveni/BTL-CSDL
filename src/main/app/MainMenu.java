@@ -18,8 +18,8 @@ import java.util.Scanner;
 
 /**
  * Menu chính. Chỉ Tú sửa file này (đăng ký module).
- * Thứ tự khớp số module trong docs/PHAN_CONG.md: 01 đến 10.
- * Module 04 (Khóa học) và 05 (Dự án) dùng giao diện đồ họa Swing nên được mở bằng SwingLauncherModule.
+ * Menu dòng lệnh dành cho người phát triển, chạy với quyền quản trị (không qua màn hình đăng nhập).
+ * Giao diện chính của ứng dụng là Swing (xem SwingApp); module 04 và 05 chỉ còn mã Dao/Service, không có menu.
  */
 public class MainMenu {
 
@@ -29,8 +29,6 @@ public class MainMenu {
         modules.add(new ThanhVienModule());                                              // 01
         modules.add(new BanChuyenMonModule());                                           // 02
         modules.add(new QuyenHanModule());                                               // 03
-        modules.add(new SwingLauncherModule("Quản lý Khóa học (giao diện đồ họa)", 3));  // 04
-        modules.add(new SwingLauncherModule("Quản lý Dự án (giao diện đồ họa)", 4));     // 05
         modules.add(new SuKienModule());                                                 // 06
         modules.add(new ThuChiModule());                                                 // 07
         modules.add(new DanhGiaModule());                                                // 08

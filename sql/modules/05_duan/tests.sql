@@ -53,18 +53,21 @@ BEGIN
 
     BEGIN
         DECLARE CONTINUE HANDLER FOR 3819 SET rejected = TRUE;
+        DECLARE CONTINUE HANDLER FOR 4025 SET rejected = TRUE; -- MariaDB báo CHECK bằng 4025
         INSERT INTO ThamGiaDuAn VALUES ('DA_TEST_TV1', 'DA_TEST_01', NULL, 150);
     END;
     IF NOT rejected THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'DA: khong chan tien do 150'; END IF;
     SET rejected = FALSE;
     BEGIN
         DECLARE CONTINUE HANDLER FOR 3819 SET rejected = TRUE;
+        DECLARE CONTINUE HANDLER FOR 4025 SET rejected = TRUE; -- MariaDB báo CHECK bằng 4025
         INSERT INTO ThamGiaDuAn VALUES ('DA_TEST_TV1', 'DA_TEST_01', NULL, -1);
     END;
     IF NOT rejected THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'DA: khong chan tien do am'; END IF;
     SET rejected = FALSE;
     BEGIN
         DECLARE CONTINUE HANDLER FOR 3819 SET rejected = TRUE;
+        DECLARE CONTINUE HANDLER FOR 4025 SET rejected = TRUE; -- MariaDB báo CHECK bằng 4025
         UPDATE ThamGiaDuAn SET TienDoRieng = 150 WHERE MaDuAn = 'DA_TEST_02';
     END;
     IF NOT rejected THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'DA: UPDATE tien do sai khong bi chan'; END IF;
@@ -72,6 +75,7 @@ BEGIN
     SET rejected = FALSE;
     BEGIN
         DECLARE CONTINUE HANDLER FOR 3819 SET rejected = TRUE;
+        DECLARE CONTINUE HANDLER FOR 4025 SET rejected = TRUE; -- MariaDB báo CHECK bằng 4025
         INSERT INTO DuAn (MaDuAn, TenDuAn, NgayBatDau, HanHoanThanh)
         VALUES ('DA_TEST_BAD', 'Sai ngay', '2026-10-31', '2026-10-01');
     END;

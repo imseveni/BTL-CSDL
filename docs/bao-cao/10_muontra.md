@@ -2,6 +2,8 @@
 
 Người phụ trách: **Trường**. Đã triển khai SQL (trigger, thủ tục, view), Java và nối vào menu chính qua `MuonTraModule`.
 
+> **Bản tích hợp:** tab "Báo cáo" mẫu trong màn hình Mượn – Trả đã được gỡ; báo cáo thật là module 11 ([11_baocaomuontra.md](11_baocaomuontra.md)). Thành viên chỉ thấy và lập phiếu của mình; duyệt, từ chối, ghi nhận trả dành cho Ban Chủ nhiệm.
+
 ## 1. Bảng và các cột
 
 **PhieuMuon**

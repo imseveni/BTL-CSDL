@@ -36,12 +36,14 @@ BEGIN
 
     BEGIN
         DECLARE CONTINUE HANDLER FOR 3819 SET rejected = TRUE;
+        DECLARE CONTINUE HANDLER FOR 4025 SET rejected = TRUE; -- MariaDB báo CHECK bằng 4025
         INSERT INTO KhoaHoc VALUES ('KH_TEST_BAD', 'Sai ngay', '2026-10-31', '2026-10-01');
     END;
     IF NOT rejected THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'KH: khong chan ngay sai'; END IF;
     SET rejected = FALSE;
     BEGIN
         DECLARE CONTINUE HANDLER FOR 3819 SET rejected = TRUE;
+        DECLARE CONTINUE HANDLER FOR 4025 SET rejected = TRUE; -- MariaDB báo CHECK bằng 4025
         UPDATE KhoaHoc SET NgayBeGiang = '2026-09-01' WHERE MaKhoaHoc = 'KH_TEST_01';
     END;
     IF NOT rejected THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'KH: UPDATE ngay sai khong bi chan'; END IF;

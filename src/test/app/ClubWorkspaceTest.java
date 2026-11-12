@@ -70,14 +70,14 @@ class ClubWorkspaceTest {
         assertThrows(IllegalArgumentException.class, () -> workspace.showTab(-1));
     }
 
-    @Test void danhSachModuleDayDuMuoiTabTheoThuTuPhanCong() {
-        List<String> titles = SwingModules.all().stream().map(SwingModule::getTitle).toList();
-        assertEquals(11, titles.size());
-        assertEquals(11, titles.stream().distinct().count());
-        assertEquals("Thành viên", titles.get(0));
-        assertEquals("Khóa học", titles.get(3));
-        assertEquals("Dự án", titles.get(4));
-        assertEquals("Mượn – Trả", titles.get(9));
-        assertEquals("Báo cáo Mượn – Trả", titles.get(10));
+    @Test void banChuNhiemCoBonTabVaThanhVienCoBaTabRieng() {
+        List<String> bcn = SwingModules.choVaiTro(common.PhienLamViec.VaiTro.BAN_CHU_NHIEM).stream()
+                .map(SwingModule::getTitle).toList();
+        assertEquals(List.of("Thành viên", "Cơ sở vật chất", "Mượn – Trả", "Báo cáo Mượn – Trả"), bcn);
+        assertEquals(bcn, SwingModules.all().stream().map(SwingModule::getTitle).toList());
+        List<String> tv = SwingModules.choVaiTro(common.PhienLamViec.VaiTro.THANH_VIEN).stream()
+                .map(SwingModule::getTitle).toList();
+        assertEquals(List.of("Hồ sơ của tôi", "Cơ sở vật chất", "Mượn – Trả"), tv);
+        assertFalse(tv.contains("Báo cáo Mượn – Trả"), "Thành viên không có tab báo cáo");
     }
 }

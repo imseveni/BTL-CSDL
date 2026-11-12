@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 class MainMenuTest {
 
     @Test
-    void menuHas10Modules() {
-        assertEquals(11, new MainMenu().getModules().size());
+    void menuConsoleConLaChinModule() {
+        assertEquals(9, new MainMenu().getModules().size());
     }
 }

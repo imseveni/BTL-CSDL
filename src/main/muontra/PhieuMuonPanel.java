@@ -1,5 +1,6 @@
 package muontra;
 
+import common.PhienLamViec;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -103,6 +104,13 @@ public class PhieuMuonPanel extends JPanel {
             }
         });
         capNhatNut(null);
+        if (PhienLamViec.laThanhVien()) {
+            // Thành viên chỉ lập và theo dõi phiếu của mình; duyệt, từ chối, ghi nhận trả là việc của Ban Chủ nhiệm.
+            nutDuyet.setVisible(false);
+            nutTuChoi.setVisible(false);
+            nutTra.setVisible(false);
+            nutTraTatCa.setVisible(false);
+        }
 
         // Chỉ chạm vào MySQL khi màn hình thật sự hiện ra lần đầu.
         addHierarchyListener(e -> {
@@ -130,7 +138,7 @@ public class PhieuMuonPanel extends JPanel {
     private JPanel taoThanhThaoTac() {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 6));
         p.setBackground(new Color(0xDDE1E6));
-        JLabel tieuDe = new JLabel("DANH SÁCH PHIẾU MƯỢN");
+        JLabel tieuDe = new JLabel(PhienLamViec.laThanhVien() ? "PHIẾU MƯỢN CỦA TÔI" : "DANH SÁCH PHIẾU MƯỢN");
         tieuDe.setFont(tieuDe.getFont().deriveFont(Font.BOLD));
         p.add(tieuDe);
         p.add(nutThemTb);
@@ -297,7 +305,8 @@ public class PhieuMuonPanel extends JPanel {
         LocalDate homNay = LocalDate.now();
         String[] v = hoiThongTin("Tạo phiếu mượn",
                 new String[]{"Mã phiếu", "MSV người mượn", "Ngày mượn (yyyy-MM-dd)", "Ngày hẹn trả (yyyy-MM-dd)", "Mục đích"},
-                new String[]{"", "", homNay.toString(), homNay.plusDays(7).toString(), ""});
+                new String[]{"", PhienLamViec.laThanhVien() ? PhienLamViec.msvHienTai() : "", homNay.toString(),
+                        homNay.plusDays(7).toString(), ""});
         if (v == null) {
             return;
         }

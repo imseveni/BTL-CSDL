@@ -1,5 +1,6 @@
 package thanhvien;
 
+import common.PhienLamViec;
 import common.Validation;
 
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ public class ThanhVienService {
     }
 
     public void them(ThanhVien tv) {
+        PhienLamViec.yeuCauBanChuNhiem("thêm thành viên");
         if (tv == null) {
             throw new IllegalArgumentException("Thông tin thành viên không được trống.");
         }
@@ -55,6 +57,9 @@ public class ThanhVienService {
 
     /** Cập nhật thông tin cá nhân. Ban và chức vụ đổi ở module 02; trạng thái dùng {@link #doiTrangThai}. */
     public void capNhat(ThanhVien tv) {
+        if (tv != null) {
+            PhienLamViec.yeuCauChinhMinhHoacBanChuNhiem(tv.msv(), "sửa thông tin cá nhân");
+        }
         if (tv == null) {
             throw new IllegalArgumentException("Thông tin thành viên không được trống.");
         }
@@ -65,6 +70,7 @@ public class ThanhVienService {
     }
 
     public void doiTrangThai(String msv, String trangThai) {
+        PhienLamViec.yeuCauBanChuNhiem("đổi trạng thái thành viên");
         String ma = Validation.required(msv, "Mã sinh viên", 20);
         String tt = Validation.required(trangThai, "Trạng thái");
         oneOf(tt, TRANG_THAI, "Trạng thái");
@@ -72,11 +78,13 @@ public class ThanhVienService {
     }
 
     public void xoa(String msv) {
+        PhienLamViec.yeuCauBanChuNhiem("xóa thành viên");
         dao.xoa(Validation.required(msv, "Mã sinh viên", 20));
     }
 
     /** Từ khóa, mã ban, trạng thái đều tùy chọn; để trống nghĩa là không lọc theo tiêu chí đó. */
     public List<ThanhVien> tim(String tuKhoa, String maBan, String trangThai) {
+        PhienLamViec.yeuCauBanChuNhiem("tìm kiếm danh sách thành viên");
         String tt = Validation.optional(trangThai);
         if (tt != null) {
             oneOf(tt, TRANG_THAI, "Trạng thái");
@@ -85,10 +93,12 @@ public class ThanhVienService {
     }
 
     public ThanhVien chiTiet(String msv) {
+        PhienLamViec.yeuCauChinhMinhHoacBanChuNhiem(msv, "xem thông tin cá nhân");
         return dao.chiTiet(Validation.required(msv, "Mã sinh viên", 20));
     }
 
     public List<ThanhVien> giaNhap(LocalDate tuNgay, LocalDate denNgay) {
+        PhienLamViec.yeuCauBanChuNhiem("xem danh sách thành viên");
         if (tuNgay != null && denNgay != null && denNgay.isBefore(tuNgay)) {
             throw new IllegalArgumentException("Đến ngày không được trước từ ngày.");
         }
@@ -97,6 +107,7 @@ public class ThanhVienService {
 
     /** Dữ liệu báo cáo danh sách thành viên; ban và trạng thái để trống nghĩa là không lọc. */
     public List<ThanhVien> baoCaoDanhSach(String maBan, String trangThai) {
+        PhienLamViec.yeuCauBanChuNhiem("lập báo cáo thành viên");
         String tt = Validation.optional(trangThai);
         if (tt != null) {
             oneOf(tt, TRANG_THAI, "Trạng thái");
@@ -106,6 +117,7 @@ public class ThanhVienService {
 
     /** Dữ liệu báo cáo tổng hợp hoạt động trong kỳ; cần cả hai ngày và đến ngày không trước từ ngày. */
     public List<TongHopHoatDong> baoCaoHoatDong(LocalDate tuNgay, LocalDate denNgay) {
+        PhienLamViec.yeuCauBanChuNhiem("lập báo cáo thành viên");
         Validation.requiredDate(tuNgay, "Từ ngày");
         Validation.requiredDate(denNgay, "Đến ngày");
         if (denNgay.isBefore(tuNgay)) {
@@ -119,14 +131,17 @@ public class ThanhVienService {
     }
 
     public List<ThongKeTrangThai> thongKeTrangThai() {
+        PhienLamViec.yeuCauBanChuNhiem("xem thống kê thành viên");
         return dao.thongKeTrangThai();
     }
 
     public List<HoatDong> lichSu(String msv) {
+        PhienLamViec.yeuCauChinhMinhHoacBanChuNhiem(msv, "xem lịch sử hoạt động");
         return dao.lichSu(Validation.required(msv, "Mã sinh viên", 20));
     }
 
     public TongQuanThanhVien tongQuan(String msv) {
+        PhienLamViec.yeuCauChinhMinhHoacBanChuNhiem(msv, "xem tổng quan hoạt động");
         return dao.tongQuan(Validation.required(msv, "Mã sinh viên", 20));
     }
 

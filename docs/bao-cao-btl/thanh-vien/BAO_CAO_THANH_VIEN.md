@@ -234,7 +234,7 @@ Các tiêu chí kết hợp bằng phép **và**. Ví dụ tìm: từ khóa `Vă
 
 ## Mục 7. Hai báo cáo xem trên màn hình và xuất file
 
-Tab **Báo cáo** (cạnh tab Quản lý thành viên) cho chọn báo cáo, nhập **tên câu lạc bộ** và **người lập**, chọn tham số, bấm **Xem báo cáo** để xem ngay trên màn hình, rồi **Xuất Excel (.xlsx)** để lưu file đúng như đang xem. File mở bằng Excel, in khổ A4 nằm ngang, gọn trong một trang với báo cáo ngắn, tiêu đề bảng lặp lại ở mỗi trang với báo cáo dài.
+Tab **Báo cáo** (cạnh tab Quản lý thành viên) cho chọn báo cáo, nhập **người lập** (mặc định là người đang đăng nhập), chọn tham số, bấm **Xem báo cáo** để xem ngay trên màn hình đúng như trang in, rồi **Xuất PDF** để lưu file. File PDF khổ A4 nằm ngang, dùng chung một mẫu với báo cáo Mượn – Trả cơ sở vật chất (cùng đầu trang, thẻ thống kê, bảng, khối tổng kết và chữ ký); tiêu đề bảng lặp lại ở mỗi trang với báo cáo dài.
 
 ### 7.1 Báo cáo 1: Danh sách thành viên câu lạc bộ
 
@@ -244,13 +244,13 @@ Tab **Báo cáo** (cạnh tab Quản lý thành viên) cho chọn báo cáo, nh�
 | **Gửi cho ai** | Chủ nhiệm CLB; giảng viên phụ trách và Đoàn trường (đơn vị quản lý CLB) |
 | **Dùng để làm gì** | Đăng ký danh sách thành viên sinh hoạt với đơn vị quản lý, thường vào đầu mỗi học kỳ |
 | **Tham số** | Ban (hoặc tất cả), trạng thái (hoặc tất cả) |
-| **Nội dung** | Bảng thành viên theo thứ tự ban, chức vụ (Chủ nhiệm đứng đầu), MSV; dòng tổng số thành viên, số thành viên theo ban và theo trạng thái; khối chữ ký Người lập, Chủ nhiệm |
+| **Nội dung** | Bảng thành viên theo thứ tự ban, chức vụ (Chủ nhiệm đứng đầu), mã sinh viên; dòng tổng số thành viên, số thành viên theo ban và theo trạng thái; khối chữ ký Người lập, Chủ nhiệm |
 
 ![Báo cáo 1 trên màn hình](anh/03_bao_cao_danh_sach.png)
 
-Bản xuất ra Excel (ảnh bản in):
+Bản xuất ra PDF (ảnh trang in):
 
-![File Excel báo cáo 1](anh/mau_bao_cao_1_danh_sach.png)
+![File PDF báo cáo 1](anh/mau_bao_cao_1_danh_sach.png)
 
 ### 7.2 Báo cáo 2: Tổng hợp hoạt động của thành viên
 
@@ -266,14 +266,14 @@ Báo cáo này lấy dữ liệu từ nhiều bảng (khóa học, dự án, s�
 
 ![Báo cáo 2 trên màn hình](anh/04_bao_cao_hoat_dong.png)
 
-Bản xuất ra Excel:
+Bản xuất ra PDF:
 
-![File Excel báo cáo 2](anh/mau_bao_cao_2_hoat_dong.png)
+![File PDF báo cáo 2](anh/mau_bao_cao_2_hoat_dong.png)
 
-Hai file mẫu nằm trong thư mục `mau-xuat/`. Số liệu trong ảnh là dữ liệu mẫu của dự án (`seed_master.sql` và `seed.sql` các module), chỉ để minh họa.
+Hai file PDF mẫu nằm trong thư mục `mau-xuat/`. Số liệu trong ảnh là dữ liệu mẫu của dự án (`seed_master.sql` và `seed.sql` các module), chỉ để minh họa.
 
 ### 7.3 Cách xuất file
-File `.xlsx` được ghi trực tiếp bằng mã Java của dự án (lớp `XlsxWriter`), không cần cài thêm thư viện: `.xlsx` là một gói nén chứa các tệp XML. Báo cáo gồm tên đơn vị, tiêu đề, kỳ hoặc bộ lọc, người lập, nơi nhận, mục đích, ngày lập, bảng dữ liệu có viền, dòng tổng hợp, khối chữ ký và số trang ở chân trang.
+File `.pdf` được ghi trực tiếp bằng mã Java của dự án (lớp `common.BaoCaoPdf`, nhúng font DejaVu Sans để hiển thị đủ tiếng Việt), không cần cài thêm thư viện. Nội dung báo cáo được mô tả bằng `common.ReportSheet`, nên mọi báo cáo của dự án có cùng bố cục: tên đơn vị và quốc hiệu, tiêu đề, kỳ báo cáo, người lập, nơi nhận, mục đích, thẻ thống kê, bảng dữ liệu, tổng kết, khối chữ ký và số trang. Tên câu lạc bộ lấy từ `common.ThongTinClb` (đổi bằng biến môi trường `CLB_TEN_CLB`).
 
 ---
 
@@ -288,10 +288,10 @@ File `.xlsx` được ghi trực tiếp bằng mã Java của dự án (lớp `X
 | 4. Chuẩn hóa 3NF | Mục 4 | Tài liệu này |
 | 5. Hai màn hình nhập | Mục 5 | `src/main/thanhvien/ThanhVienSwingUi.java`; thủ tục `sp_ThemThanhVien`, `sp_CapQuyen` |
 | 6. Màn hình tìm kiếm | Mục 6 | `ThanhVienSwingUi.java`; thủ tục `sp_TimThanhVien` |
-| 7. Hai báo cáo xuất file | Mục 7 | `ThanhVienBaoCaoUi.java`, `BaoCaoThanhVien.java`, `common/XlsxWriter.java`; thủ tục `sp_BaoCaoDanhSachThanhVien`, `sp_BaoCaoHoatDongThanhVien` |
+| 7. Hai báo cáo xuất file | Mục 7 | `ThanhVienBaoCaoUi.java`, `BaoCaoThanhVien.java`, `common/BaoCaoPdf.java`, `common/ReportSheet.java`; thủ tục `sp_BaoCaoDanhSachThanhVien`, `sp_BaoCaoHoatDongThanhVien` |
 
 ### 8.2 Hạn chế hiện tại
-- Báo cáo xuất ở định dạng Excel; chưa xuất PDF.
+- Chữ trong file PDF là ảnh (không bôi đen, sao chép được); nội dung báo cáo được lưu thêm trong thuộc tính của file để đối chiếu.
 - Màn hình quyền hạn gọi lại các thủ tục của module Quyền hạn (do thành viên khác phụ trách).
 - Số liệu báo cáo hoạt động phụ thuộc dữ liệu các module khác đã nhập.
 

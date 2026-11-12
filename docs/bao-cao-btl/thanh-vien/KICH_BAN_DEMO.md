@@ -13,7 +13,7 @@ Dành cho buổi demo với cô. Làm theo thứ tự; mỗi bước ghi rõ **v
    ```
 3. Cấu hình kết nối: sao chép `src/main/resources/db.properties.example` thành `db.properties`, sửa tài khoản và mật khẩu MySQL.
 4. Thử chạy: `mvn compile exec:java`. Cửa sổ mở ra, tab **Thành viên** hiện 20 thành viên, chọn một dòng thì phần dưới có lịch sử hoạt động.
-5. Chuẩn bị sẵn: ảnh màn hình trong `anh/` và hai file Excel mẫu trong `mau-xuat/` (phương án dự phòng).
+5. Chuẩn bị sẵn: ảnh màn hình trong `anh/` và hai file PDF mẫu trong `mau-xuat/` (phương án dự phòng).
 6. Xóa dữ liệu demo cũ nếu có: chạy lại `reset_db.sql` và `run_all.sql` ngay trước buổi demo để MSV `B21DCCN901` chưa tồn tại.
 
 ## B. Trình tự demo
@@ -51,9 +51,9 @@ Dành cho buổi demo với cô. Làm theo thứ tự; mỗi bước ghi rõ **v
 ### Bước 5. Hai báo cáo (2 đến 3 phút) — tiêu chí 7
 1. Mở tab **Báo cáo**. Báo cáo 1: giữ "Tất cả ban", nhập **Người lập** (ví dụ tên bạn thư ký), bấm **Xem báo cáo**.
 2. **Nói rõ thực tế sử dụng:** "Báo cáo này do **thư ký CLB** lập, **gửi chủ nhiệm, giảng viên phụ trách và Đoàn trường** để đăng ký danh sách sinh hoạt đầu kỳ." (chỉ vào dòng Người lập, Nơi nhận, Mục đích trên màn hình)
-3. Bấm **Xuất Excel (.xlsx)**, lưu file, **mở file bằng Excel** cho cô xem: tiêu đề, người lập, nơi nhận, bảng, tổng, khối chữ ký.
+3. Bấm **Xuất PDF**, lưu file, **mở file PDF** cho cô xem: tiêu đề, người lập, nơi nhận, bảng, tổng, khối chữ ký.
 4. Báo cáo 2: chọn "Tổng hợp hoạt động thành viên trong kỳ", đặt từ ngày và đến ngày, Xem báo cáo.
-5. **Nói:** "Báo cáo này do **Ban Chủ nhiệm** lập, **gửi chủ nhiệm và giảng viên phụ trách** để xét khen thưởng cuối kỳ. Số liệu lấy từ 6 loại hoạt động ở các bảng khác nhau." Xuất Excel lần nữa.
+5. **Nói:** "Báo cáo này do **Ban Chủ nhiệm** lập, **gửi chủ nhiệm và giảng viên phụ trách** để xét khen thưởng cuối kỳ. Số liệu lấy từ 6 loại hoạt động ở các bảng khác nhau." Xuất PDF lần nữa.
 
 ### Bước 6. Thiết kế và chuẩn hóa (1 đến 2 phút) — tiêu chí 1, 3, 4
 - Mở báo cáo `BAO_CAO_THANH_VIEN`, mục 4.3 (bảng quá trình đưa về 3NF).
@@ -62,7 +62,7 @@ Dành cho buổi demo với cô. Làm theo thứ tự; mỗi bước ghi rõ **v
 ## C. Phương án dự phòng
 | Sự cố | Cách xử lý |
 |---|---|
-| Không kết nối được MySQL | Bấm **Kết nối MySQL** ở góc trên bên phải, nhập lại địa chỉ, tài khoản, mật khẩu; nếu vẫn lỗi, dùng ảnh trong `anh/` và file Excel trong `mau-xuat/` để trình bày |
+| Không kết nối được MySQL | Bấm **Kết nối MySQL** ở góc trên bên phải, nhập lại địa chỉ, tài khoản, mật khẩu; nếu vẫn lỗi, dùng ảnh trong `anh/` và file PDF trong `mau-xuat/` để trình bày |
 | Máy không mở được cửa sổ | Dùng `mvn compile exec:java -Dexec.args="--console"` (menu chữ) và các ảnh |
 | Thông báo lỗi khác bảng ca kiểm tra | Đọc thông báo; mọi thông báo đều do mã dự án viết, nội dung tiếng Việt; chỉ ra ca đó bị chặn là đủ |
 | Nhập sai làm lệch dữ liệu demo | Chạy lại `reset_db.sql` rồi `run_all.sql` (có cờ `--default-character-set=utf8mb4`) |
@@ -77,4 +77,4 @@ Dành cho buổi demo với cô. Làm theo thứ tự; mỗi bước ghi rõ **v
 | Khóa chính ghép của ThanhVien_QuyenHan để làm gì? | Chặn cấp trùng một quyền cho cùng thành viên ngay ở cơ sở dữ liệu |
 | Dữ liệu sai có thể lọt qua giao diện không? | Không: thủ tục và các ràng buộc (khóa chính, khóa ngoại, CHECK) ở MySQL vẫn kiểm tra lại |
 | Báo cáo xuất file được dùng làm gì? | Xem mục 7: ai lập, gửi ai, dùng để làm gì (ghi ngay trên báo cáo) |
-| Có xuất PDF không? | Hiện xuất Excel; Excel in ra khổ A4 nằm ngang, có thể lưu thành PDF từ Excel |
+| Có xuất PDF không? | Có, cả hai báo cáo xuất thẳng ra PDF khổ A4 nằm ngang |
